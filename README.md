@@ -3,17 +3,17 @@ A python module for calculating the Earth-matter Effect. Works standalone or wit
 
 1) You will need the python-devel, pybind11 and setuptools packages
 
-2) Modify setup.EMEWS.py to use the correct libraries and paths. 
+2) Modify setup.py to use the correct libraries and paths. 
 
 3) To compile enter 
 
-sudo python3 setup.EMEWS.py install 
+sudo python3 setup.py install 
 
 4) If you don't want to sudo you may want to use the option
 
 --install-lib=destination/directory/
 
-5) The file EMEWS.py uses the module to compute the Earth matter effects upon a neutrino signal
+5) The python code EMEWS.py uses the module to compute the Earth matter effects upon a neutrino signal
    from Betelgeuse in SuperK. It will generate a lot of files in the whichever folder is picked
    in the script. The output can be switched off by changing the outputflag to False
 
