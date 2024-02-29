@@ -49,12 +49,6 @@ extern double comega12p120_2,comega13p120_2,comega23p120_2, somega12p120_2,someg
 extern std::vector<std::vector<MATRIX<std::complex<double>,NF,NF> > > HfV;
 extern std::array<MATRIX<std::complex<double>,NF,NF>,NM> UV;
 
-// vacuum values of the off-diagonal elements of the cofactor matrices
-extern std::vector<std::vector<std::array<MATRIX<std::complex<double>,NF,NF>,NF> > > CV;
-
-// mixing matrix element prefactors
-extern std::vector<std::vector<std::array<std::array<double,NF>,NF> > > AV;
-
 // *******************************************************
 
 // miniumum and maximum radius for calculation

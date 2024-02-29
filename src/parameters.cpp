@@ -43,12 +43,6 @@ double comega12p120_2,comega13p120_2,comega23p120_2, somega12p120_2,somega13p120
 vector<vector<MATRIX<complex<double>,NF,NF> > > HfV;
 array<MATRIX<complex<double>,NF,NF>,NM> UV;
 
-// vacuum values of the off-diagonal elements of the cofactor matrices
-vector<vector<array<MATRIX<complex<double>,NF,NF>,NF> > > CV;
-
-// mixing matrix element prefactors
-vector<vector<array<array<double,NF>,NF> > > AV;
-
 // *******************************************************
 
 // miniumum and maximum radius for calculation

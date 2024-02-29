@@ -169,8 +169,6 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
            E = vector<double>(NE);
            kV = vector<array<double,NF> >(NE);
            HfV=vector<vector<MATRIX<complex<double>,NF,NF> > >(NM,vector<MATRIX<complex<double>,NF,NF> >(NE));
-           CV=vector<vector<array<MATRIX<complex<double>,NF,NF>,NF> > >(NM,vector<array<MATRIX<complex<double>,NF,NF>,NF> >(NE));
-           AV=vector<vector<array<array<double,NF>,NF> > >(NM,vector<array<array<double,NF>,NF> >(NE));
 
 	   // vectors of energies at infinity and vacuum eigenvalues at infinity
            for(i=0;i<=NE-1;i++)
@@ -199,10 +197,6 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
            // vaccum mixing matrices and Hamiltonians at infinity
            Evaluate_UV(); 
 	   Evaluate_HfV(); 
-           // cofactor matrices in vacuum
-           Evaluate_CV();
-           // mixing matrix element prefactors in vacuum
-           Evaluate_AV();
 
            // *****************************************************
            // quantities evaluated at inital point
@@ -219,36 +213,20 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
            VfMSW0[tau][tau]=Vtau(rrho,YYe); 
            VfMSWbar0=-Conjugate(VfMSW0);
 
-           // cofactor matrices at initial point - will be recycled as cofactor matrices at beginning of every step           
-           vector<vector<array<MATRIX<complex<double>,NF,NF>,NF> > > C0(NM,vector<array<MATRIX<complex<double>,NF,NF>,NF> >(NE));
-           // mixing matrix element prefactors at initial point - will be recycled like C0         
-           vector<vector<array<array<double,NF>,NF> > > A0(NM,vector<array<array<double,NF>,NF> >(NE));
            // mixing matrices at initial point, not recycled
            U0 = vector<vector<MATRIX<complex<double>,NF,NF> > >(NM,vector<MATRIX<complex<double>,NF,NF> >(NE)); 
 
            // mixing angles to MSW basis at initial point and assign A0
 	   for(i=0;i<=NE-1;i++)
-              { Hf0=HfV[nu][i];//+VfMSW0;
+              { Hf0=HfV[nu][i];//+VfMSW0; 
                 k0=k(Hf0);
                 deltak0=deltak(k0);
-                C0[nu][i]=CofactorMatrices(Hf0,k0);
-                for(int j=0;j<=NF-1;j++)
-                   { if( real(C0[nu][i][j][mu][e]*CV[nu][i][j][mu][e])<0. ){ A0[nu][i][j][e]=-AV[nu][i][j][e];} else{ A0[nu][i][j][e]=AV[nu][i][j][e];}
-                     A0[nu][i][j][mu]=AV[nu][i][j][mu];
-                     if( real(C0[nu][i][j][mu][tau]*CV[nu][i][j][mu][tau])<0. ){ A0[nu][i][j][tau]=-AV[nu][i][j][tau];} else{ A0[nu][i][j][tau]=AV[nu][i][j][tau];}
-                    }
-                U0[nu][i]=MixingMatrix(deltak0,C0[nu][i],A0[nu][i]);
+                U0[nu][i]=MixingMatrix(Hf0,k0,deltak0);
 
                 Hfbar0=HfV[antinu][i];//-VfMSW0;
                 kbar0=kbar(Hfbar0);
                 deltakbar0=deltakbar(kbar0);
-                C0[antinu][i]=CofactorMatrices(Hfbar0,kbar0);
-                for(int j=0;j<=NF-1;j++)
-                   { if( real(C0[antinu][i][j][mu][e]*CV[antinu][i][j][mu][e])<0. ){ A0[antinu][i][j][e]=-AV[antinu][i][j][e];} else{ A0[antinu][i][j][e]=AV[antinu][i][j][e];}
-                     A0[antinu][i][j][mu]=AV[antinu][i][j][mu];
-                     if( real(C0[antinu][i][j][mu][tau]*CV[antinu][i][j][mu][tau])<0. ){ A0[antinu][i][j][tau]=-AV[antinu][i][j][tau];} else{ A0[antinu][i][j][tau]=AV[antinu][i][j][tau];}
-                    }
-                U0[antinu][i]=MixingMatrix(deltakbar0,C0[antinu][i],A0[antinu][i]);
+                U0[antinu][i]=MixingMatrix(Hfbar0,kbar0,deltakbar0);
                }
 
            // ******************************************************
@@ -272,12 +250,6 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
            vector<vector<array<double,NY> > > Y(NM,vector<array<double,NY> >(NE));
            vector<vector<array<double,NY> > > Y0(NM,vector<array<double,NY> >(NE));
            vector<vector<array<double,NY> > > Yerror(NM,vector<array<double,NY> >(NE));
-
-           // cofactor matrices
-           vector<vector<array<MATRIX<complex<double>,NF,NF>,NF> > > C=C0;
-
-           // mixing matrix prefactors
-           vector<vector<array<array<double,NF>,NF> > > A=A0;
 
            // accumulated S matrices from prior integration domains
            vector<vector<MATRIX<complex<double>,NF,NF> > > Scumulative(NM,vector<MATRIX<complex<double>,NF,NF> >(NE));
@@ -344,8 +316,8 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
 
                 if(ID.outputflag==true){ output=true;}
                 if(output==true){ 
-                    Output_Pvslambda(fPvslambda,lambda,Y,C,A,Scumulative);
-                    Output_Hvslambda(fHvslambda,lambda,Y,C,A,Scumulative);
+                    Output_Pvslambda(fPvslambda,lambda,Y,Scumulative);
+                    Output_Hvslambda(fHvslambda,lambda,Y,Scumulative);
                    } 
 
                 // **********************************************************    
@@ -355,13 +327,11 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
 
                     lambda0=lambda;
                     Y0=Y;
-                    C0=C;
-                    A0=A;
 
                     // beginning of RK section
                     do{ repeat=false;                         
                         // first step: assumes derivatives are evaluated at lambda
-                        K(lambda,dlambda,Y,C,A,Ks[0]); 
+                        K(lambda,dlambda,Y,Ks[0]); 
 
                         // second step
                         lambda=lambda0+AA[1]*dlambda;
@@ -371,7 +341,7 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
                                 for(int j=0;j<=NY-1;j++){ Y[m][i][j] += BB[1][0] * Ks[0][m][i][j];}
 		               } 
 			   }
-                        K(lambda,dlambda,Y,C,A,Ks[1]);
+                        K(lambda,dlambda,Y,Ks[1]);
 
                         // remaining steps
                         for(int k=2;k<=NRK-1;k++){
@@ -385,7 +355,7 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
 				       }
 				   } 
 			       } 
-                            K(lambda,dlambda,Y,C,A,Ks[k]);
+                            K(lambda,dlambda,Y,Ks[k]);
                            }
 
                         // increment all quantities and update C and A arrays
@@ -404,9 +374,6 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
                                } 
                            }
 
-                        C=UpdateC(lambda);
-                        A=UpdateA(C,C0,A0);
-
                         // find largest error
                         maxerror=0.; 
                         for(state m=nu;m<=antinu;m++){
@@ -422,7 +389,7 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
                          }
 
                         // reset integration variables to those at beginning of step
-                        if(repeat==true){ lambda=lambda0; Y=Y0; C=C0; A=A0; finish=output=false;} 
+                        if(repeat==true){ lambda=lambda0; Y=Y0; finish=output=false;} 
 
                        }while(repeat==true);
                     // end of RK section
@@ -465,9 +432,9 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
 
                     if(output==true)
                       { cout<<"\nOutput at\t"<<lambda<<flush;
-                        Output_Pvslambda(fPvslambda,lambda,Y,C,A,Scumulative);
-                        Output_Hvslambda(fHvslambda,lambda,Y,C,A,Scumulative);
-                        //Output_PvsE(fPvsE,outputfilenamestem,lambda,Y,C,A,Scumulative);
+                        Output_Pvslambda(fPvslambda,lambda,Y,Scumulative);
+                        Output_Hvslambda(fHvslambda,lambda,Y,Scumulative);
+                        //Output_PvsE(fPvsE,outputfilenamestem,lambda,Y,Scumulative);
                         output=false;
                        }
 
@@ -482,23 +449,19 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
                 if(d<=ND-2)
                   { double lambdaminus=lambdamax;
                     double lambdaplus=lambdamax+2.*cgs::units::cm;
-                    Scumulative=UpdateSm(lambdaminus,lambdaplus,Y,C,A,Scumulative);
-
-                    C0=C;
-                    C=UpdateC(lambdaplus);
-                    A=UpdateA(C,C0,A0);
+                    Scumulative=UpdateSm(lambdaminus,lambdaplus,Y,Scumulative);
                    } 
                 else{ // output at the end of the code
                       if(ID.outputflag==true){ output=true;}
                       if(output==true){ 
-                          Output_PvsE(fPvsE,outputfilenamestem,lambdamax,Y,C,A,Scumulative);
+                          Output_PvsE(fPvsE,outputfilenamestem,lambdamax,Y,Scumulative);
                           output=false;
                          }
                      } 
 
                }// end of domain loop
 
-           Pfm(lambdas.back(),Y,C,A,Scumulative,PPfm);
+           Pfm(lambdas.back(),Y,Scumulative,PPfm);
 
            // ********************************
 

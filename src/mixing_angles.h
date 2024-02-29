@@ -6,17 +6,11 @@
 
 // ****************************************************************************************
 
-MATRIX<std::complex<double>,NF,NF> MixingMatrix(MATRIX<std::complex<double>,NF,NF> Hf,std::array<double,NF> k,std::array<double,NF> dk,std::array<std::array<double,NF>,NF> A);
-MATRIX<std::complex<double>,NF,NF> MixingMatrix(std::array<double,NF> dk,std::array<MATRIX<std::complex<double>,NF,NF>,NF> &C,std::array<std::array<double,NF>,NF> A);
+MATRIX<std::complex<double>,NF,NF> MixingMatrix(MATRIX<std::complex<double>,NF,NF> Hf,std::array<double,NF> k,std::array<double,NF> dk);
 void Evaluate_UV(void);
-
-void Evaluate_CV(void);
-void Evaluate_AV(void);
 
 std::array<MATRIX<std::complex<double>,NF,NF>,NF> CofactorMatrices(MATRIX<std::complex<double>,NF,NF> H,std::array<double,NF> k);
 void CofactorMatrices(MATRIX<std::complex<double>,NF,NF> H,std::array<double,NF> k,std::array<MATRIX<std::complex<double>,NF,NF>,NF> &CC);
-
-std::array<std::array<double,NF>,NF> MixingMatrixFactors(std::array<MATRIX<std::complex<double>,NF,NF>,NF> &C,std::array<MATRIX<std::complex<double>,NF,NF>,NF> &C0,std::array<std::array<double,NF>,NF> A0);
 
 template<flavour a,flavour b> std::complex<double> C(MATRIX<std::complex<double>,NF,NF> H,double k);
 template<> std::complex<double> C<e,e>(MATRIX<std::complex<double>,NF,NF> H,double k);

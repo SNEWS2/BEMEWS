@@ -43,7 +43,7 @@ void Close_Output(ofstream &fHvslambda)
 
 // ******************************************************
 
-void Output_Pvslambda(ofstream &fPvslambda,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<array<MATRIX<complex<double>,NF,NF>,NF> > > &C0,vector<vector<array<array<double,NF>,NF> > > A0,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative)
+void Output_Pvslambda(ofstream &fPvslambda,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative)
       { array<MATRIX<complex<double>,NF,NF>,NM> VfMSW, dVfMSWdlambda;
 
         double r=sqrt(RE*RE+lambda*lambda+2.*RE*lambda*sin(altitude));
@@ -68,7 +68,7 @@ void Output_Pvslambda(ofstream &fPvslambda,double lambda,vector<vector<array<dou
            { Hf[nu][i]=HfV[nu][i] + VfMSW[nu];
              kk[nu][i]=k(Hf[nu][i]);
 	     dkk[nu][i]=deltak(kk[nu][i]);
-             UU[nu][i] = MixingMatrix(dkk[nu][i],C0[nu][i],A0[nu][i]);
+	     UU[nu][i]=MixingMatrix(Hf[nu][i],kk[nu][i],dkk[nu][i]);
 
 	     Sa[nu][i] = W(Y[nu][i]) * B(Y[nu][i]);		
 
@@ -82,7 +82,7 @@ void Output_Pvslambda(ofstream &fPvslambda,double lambda,vector<vector<array<dou
 	     Hf[antinu][i]=HfV[antinu][i] + VfMSW[antinu];
 	     kk[antinu][i]=kbar(Hf[antinu][i]);
 	     dkk[antinu][i]=deltakbar(kk[antinu][i]);
-	     UU[antinu][i]=MixingMatrix(dkk[antinu][i],C0[antinu][i],A0[antinu][i]);
+	     UU[antinu][i]=MixingMatrix(Hf[antinu][i],kk[antinu][i],dkk[antinu][i]);
       
 	     Sa[antinu][i] = W(Y[antinu][i]) * B(Y[antinu][i]);
 
@@ -129,7 +129,7 @@ void Output_Pvslambda(ofstream &fPvslambda,double lambda,vector<vector<array<dou
 
 // ************************************************************************
 
-void Output_PvsE(ofstream &fPvsE,string outputfilenamestem,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<array<MATRIX<complex<double>,NF,NF>,NF> > > &C0,vector<vector<array<array<double,NF>,NF> > > A0,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative)
+void Output_PvsE(ofstream &fPvsE,string outputfilenamestem,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative)
       { string cmdotdat("cm.dat");
         stringstream filename;
 
@@ -163,7 +163,7 @@ void Output_PvsE(ofstream &fPvsE,string outputfilenamestem,double lambda,vector<
            { Hf[nu][i]=HfV[nu][i] + VfMSW[nu];
              kk[nu][i]=k(Hf[nu][i]);
 	     dkk[nu][i]=deltak(kk[nu][i]);
-             UU[nu][i] = MixingMatrix(dkk[nu][i],C0[nu][i],A0[nu][i]);
+	     UU[nu][i]=MixingMatrix(Hf[nu][i],kk[nu][i],dkk[nu][i]);
 
 	     Sa[nu][i] = W(Y[nu][i]) * B(Y[nu][i]);
 
@@ -176,7 +176,7 @@ void Output_PvsE(ofstream &fPvsE,string outputfilenamestem,double lambda,vector<
 	     Hf[antinu][i]=HfV[antinu][i] + VfMSW[antinu];
 	     kk[antinu][i]=kbar(Hf[antinu][i]);
 	     dkk[antinu][i]=deltakbar(kk[antinu][i]);
-	     UU[antinu][i]=MixingMatrix(dkk[antinu][i],C0[antinu][i],A0[antinu][i]);
+	     UU[antinu][i]=MixingMatrix(Hf[antinu][i],kk[antinu][i],dkk[antinu][i]);
        
 	     Sa[antinu][i] = W(Y[antinu][i]) * B(Y[antinu][i]);
 
@@ -222,7 +222,7 @@ void Output_PvsE(ofstream &fPvsE,string outputfilenamestem,double lambda,vector<
 
 // ************************************************************************
 
-void Output_Hvslambda(ofstream &fHvslambda,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<array<MATRIX<complex<double>,NF,NF>,NF> > > &C0,vector<vector<array<array<double,NF>,NF> > > A0,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative)
+void Output_Hvslambda(ofstream &fHvslambda,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative)
           { MATRIX<complex<double>,NF,NF> VfMSW,VfMSWbar;
             MATRIX<complex<double>,NF,NF> Hf,Hfbar;
 
@@ -258,7 +258,7 @@ void Output_Hvslambda(ofstream &fHvslambda,double lambda,vector<vector<array<dou
                { Hf=HfV[nu][i]+VfMSW;     
                  kk=k(Hf);
                  dkk=deltak(kk);
-	  	 UU[i]=MixingMatrix(dkk,C0[nu][i],A0[nu][i]);
+	         UU[i]=MixingMatrix(Hf,kk,dkk);
 
                  BB[i]=B(Y[nu][i]);
                  WW[i]=W(Y[nu][i]);
@@ -272,7 +272,7 @@ void Output_Hvslambda(ofstream &fHvslambda,double lambda,vector<vector<array<dou
                  Hfbar=HfV[antinu][i]+VfMSWbar;
 	         kkbar=kbar(Hfbar);
                  dkkbar=deltakbar(kkbar);
-	     	 UUbar[i]=MixingMatrix(dkkbar,C0[antinu][i],A0[antinu][i]);
+	     	 UUbar[i]=MixingMatrix(Hfbar,kkbar,dkkbar);
 
                  BBbar[i]=B(Y[antinu][i]);
                  WWbar[i]=W(Y[antinu][i]);

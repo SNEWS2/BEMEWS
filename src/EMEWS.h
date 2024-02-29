@@ -94,7 +94,6 @@
 // ********************************************************************** 
 
 std::vector<std::vector<std::vector<std::vector<double> > > > Run(InputDataEMEWS ID);
-std::vector<std::vector<std::vector<std::vector<double> > > > RunSqa3SN(InputDataSqa3SN ID);
 
 // ************************ Neutrino Potentials **************************
 

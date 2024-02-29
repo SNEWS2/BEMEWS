@@ -10,7 +10,7 @@ using std::cout;
 
 // ********************************************************************************
 
-void Pfm(double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<array<MATRIX<complex<double>,NF,NF>,NF> > > &C0,vector<vector<array<array<double,NF>,NF> > > A0,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative,vector<vector<vector<vector<double> > > > &PPfm)
+void Pfm(double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative,vector<vector<vector<vector<double> > > > &PPfm)
       { double r, rrho, YYe;
 
         // ******
@@ -39,7 +39,7 @@ void Pfm(double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<array
            { Hf[nu][i]=HfV[nu][i] + VfMSW[nu];
              kk[nu][i]=k(Hf[nu][i]);
 	     dkk[nu][i]=deltak(kk[nu][i]);
-             UU[nu][i] = MixingMatrix(dkk[nu][i],C0[nu][i],A0[nu][i]);
+             UU[nu][i] = MixingMatrix(Hf[nu][i],kk[nu][i],dkk[nu][i]);
 
 	     Sa[nu][i] = W(Y[nu][i]) * B(Y[nu][i]);
 
@@ -51,7 +51,7 @@ void Pfm(double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<array
 	     Hf[antinu][i]=HfV[antinu][i] + VfMSW[antinu];
 	     kk[antinu][i]=kbar(Hf[antinu][i]);
 	     dkk[antinu][i]=deltakbar(kk[antinu][i]);
-	     UU[antinu][i]=MixingMatrix(dkk[antinu][i],C0[antinu][i],A0[antinu][i]);
+	     UU[antinu][i]=MixingMatrix(Hf[antinu][i],kk[antinu][i],dkk[antinu][i]);
        
 	     Sa[antinu][i] = W(Y[antinu][i]) * B(Y[antinu][i]);
 
