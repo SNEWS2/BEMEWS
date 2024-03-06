@@ -172,7 +172,8 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
 
 	   // vectors of energies at infinity and vacuum eigenvalues at infinity
            for(i=0;i<=NE-1;i++)
-              { E[i] = ((NE-1.-i)*Emin + i*Emax) / (NE-1.);
+              { if(NE>1){ E[i] = ((NE-1.-i)*Emin + i*Emax) / (NE-1.);}
+                else{ E[i] = Emin;}
                 kV[i][0] = m1*m1 * cgs::constants::c4 /2./E[i];
                 kV[i][1] = (m1*m1 + dm21) * cgs::constants::c4 /2./E[i];
                 kV[i][2] = (m1*m1 + dm21 + dm32) * cgs::constants::c4 /2./E[i];
