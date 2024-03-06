@@ -25,13 +25,13 @@ MATRIX<complex<double>,NF,NF> MixingMatrix(MATRIX<complex<double>,NF,NF> Hf,arra
               r2[mu]=real(C<mu,mu>(Hf,k[j]))*d;
               r2[tau]=real(C<tau,tau>(Hf,k[j]))*d;
 
-              if(r2[e]>=r2[mu] && r2[e]>=r2[tau]){ u[e][j]=C<e,e>(Hf,k[j])/sqrt(r2[e]);       u[mu][j]=C<e,mu>(Hf,k[j])/sqrt(r2[e]);     u[tau][j]=C<e,tau>(Hf,k[j])/sqrt(r2[e]);}
-              if(r2[mu]>=r2[e] && r2[mu]>=r2[tau]){ u[e][j]=C<mu,e>(Hf,k[j])/sqrt(r2[mu]);    u[mu][j]=C<mu,mu>(Hf,k[j])/sqrt(r2[mu]);   u[tau][j]=C<mu,tau>(Hf,k[j])/sqrt(r2[mu]);}
-              if(r2[tau]>=r2[e] && r2[tau]>=r2[mu]){ u[e][j]=C<tau,e>(Hf,k[j])/sqrt(r2[tau]); u[mu][j]=C<tau,mu>(Hf,k[j])/sqrt(r2[tau]); u[tau][j]=C<tau,tau>(Hf,k[j])/sqrt(r2[tau]);}
+              //if(r2[e]>=r2[mu] && r2[e]>=r2[tau]){ u[e][j]=C<e,e>(Hf,k[j])/sqrt(r2[e]);       u[mu][j]=C<e,mu>(Hf,k[j])/sqrt(r2[e]);     u[tau][j]=C<e,tau>(Hf,k[j])/sqrt(r2[e]);}
+              //if(r2[mu]>=r2[e] && r2[mu]>=r2[tau]){ u[e][j]=C<mu,e>(Hf,k[j])/sqrt(r2[mu]);    u[mu][j]=C<mu,mu>(Hf,k[j])/sqrt(r2[mu]);   u[tau][j]=C<mu,tau>(Hf,k[j])/sqrt(r2[mu]);}
+              //if(r2[tau]>=r2[e] && r2[tau]>=r2[mu]){ u[e][j]=C<tau,e>(Hf,k[j])/sqrt(r2[tau]); u[mu][j]=C<tau,mu>(Hf,k[j])/sqrt(r2[tau]); u[tau][j]=C<tau,tau>(Hf,k[j])/sqrt(r2[tau]);}
               // set the element in the e (top) row to be pure real for the first two columns
-              //if(j==0 || j==1){ u[e][j]=C<e,e>(Hf,k[j])/sqrt(r2[e]); u[mu][j]=C<e,mu>(Hf,k[j])/sqrt(r2[e]); u[tau][j]=C<e,tau>(Hf,k[j])/sqrt(r2[e]);}
+              if(j==0 || j==1){ u[e][j]=C<e,e>(Hf,k[j])/sqrt(r2[e]); u[mu][j]=C<e,mu>(Hf,k[j])/sqrt(r2[e]); u[tau][j]=C<e,tau>(Hf,k[j])/sqrt(r2[e]);}
               // set the element in the tau (bottom) row to be pure real for the 3rd column
-              //if(j==2){ u[e][j]=C<tau,e>(Hf,k[j])/sqrt(r2[tau]); u[mu][j]=C<tau,mu>(Hf,k[j])/sqrt(r2[tau]); u[tau][j]=C<tau,tau>(Hf,k[j])/sqrt(r2[tau]);}
+              if(j==2){ u[e][j]=C<tau,e>(Hf,k[j])/sqrt(r2[tau]); u[mu][j]=C<tau,mu>(Hf,k[j])/sqrt(r2[tau]); u[tau][j]=C<tau,tau>(Hf,k[j])/sqrt(r2[tau]);}
             }
        
         return u;
