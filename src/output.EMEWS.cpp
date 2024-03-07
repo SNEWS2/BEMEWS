@@ -25,7 +25,8 @@ void Initialize_Output(string outputfilenamestem,ofstream &fPvslambda,ofstream &
 
            for(int i=0;i<=NE-1;i++)
               { filename.str("");
-                filename << outputfilenamestem << string(":E=") << ((NE-1.-i)*EminMeV+i*EmaxMeV)/(NE-1.) << string("MeV:Pvslambda.dat");
+                if(NE>1){ filename << outputfilenamestem << string(":E=") << ((NE-1.-i)*EminMeV+i*EmaxMeV)/(NE-1.) << string("MeV:Pvsr.dat");}
+                else{ filename << outputfilenamestem << string(":E=") << EminMeV << string("MeV:Pvsr.dat");}
                 fPvslambdafilename[i]=filename.str();
                 fPvslambda.open(fPvslambdafilename[i].c_str()); fPvslambda.close(); // clears the file
                }
