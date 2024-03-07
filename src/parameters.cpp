@@ -23,7 +23,7 @@ vector<double> E;
 double m1,dm21,dm32;
 
 double theta12V, theta13V, theta23V, deltaV;
-array<double,NF-1> etaV;
+array<double,NF> etaV;
 double c12V,s12V, c13V,s13V, c23V,s23V, cdeltaV,sdeltaV;
 
 // vacuum eigenvalues
