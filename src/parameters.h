@@ -30,7 +30,7 @@ extern std::vector<double> E;
 extern double m1,dm21,dm32;
 
 extern double theta12V, theta13V, theta23V, deltaV;
-extern std::array<double,NF-1> etaV;
+extern std::array<double,NF> etaV;
 extern double c12V,s12V, c13V,s13V, c23V,s23V, cdeltaV,sdeltaV;
 
 // vacuum eigenvalues
