@@ -1,3 +1,5 @@
+![image](https://github.com/SNEWS2/EMEWS/assets/44247426/e73b1dbc-67b4-4b9f-998f-ee55c9fdb151)
+
 # EMEWS
 A python module for calculating the Earth-matter Effect. Works standalone or with SNEWPY
 
