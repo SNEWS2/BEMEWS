@@ -1,4 +1,6 @@
 ![image](https://github.com/SNEWS2/EMEWS/assets/44247426/e73b1dbc-67b4-4b9f-998f-ee55c9fdb151)
+Image by dreamstudio.ai
+
 
 # EMEWS
 A python module for calculating the Earth-matter Effect. Works standalone or with SNEWPY
@@ -20,7 +22,7 @@ sudo python3 setup.py install
    in the script. The output can be switched off by changing the outputflag to False
 
 6) A script is provided that allows SNEWPY to include the Earth-matter Effect in its flavor transformation
-   prescription. The results from EMEWS are used by SNEWPY to replace the D's that appear in the transformation formulae.  
+   prescription. 
 
 TROUBLESHOOTING:
 
@@ -30,6 +32,6 @@ TROUBLESHOOTING:
 2) If the script still cannot find the module you may need to put the *.so library in the same directory
    as the EMEWS.py file. The *.so library is in one of the subfolders in the build directory. 
 
-3) You may want to set the OMP_NUM_THREADS environment variable to a number suitable for your machine
+3) EMEWS uses OpenMP. You may want to set the OMP_NUM_THREADS environment variable to a number suitable for your machine.
 
 
