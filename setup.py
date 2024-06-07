@@ -6,9 +6,10 @@
 
 
 import os
-from distutils.command.sdist import sdist as DistutilsSdist
 from setuptools import setup, find_packages
 from setuptools.extension import Extension
+import sysconfig
+import pybind11
 
 #
 # Begin setup
@@ -52,13 +53,20 @@ setup_keywords['extras_require'] = {  # Optional
     'docs':['numpydoc']
 }
 
+LIBOMP_INCLUDE = os.environ['LIBOMP_INCLUDE']
+PYBIND11_INCLUDE = os.path.join(pybind11.__path__[0], "include")
+if os.name == 'posix':  # macOS or Linux
+    LIBDIR = sysconfig.get_config_var('LIBDIR')
+elif os.name == 'nt':  # Windows
+    LIBDIR = sysconfig.get_config_var('LIBDEST')
+
 EMEWS = Extension('EMEWS',
                     define_macros = [('MAJOR_VERSION', '1'), ('MINOR_VERSION', '0')],
-                    include_dirs = ['/usr/local/lib/python3.9/site-packages/pybind11/include', './src', './src/mstl', './src/mstl/math2', './src/mstl/math2/algebra', './src/mstl/math2/analysis', './src/mstl/math2/spline', './src/mstl/physics'],
-                    libraries = ['stdc++', 'm', 'gomp', 'python3'],
-                    library_dirs = ['/usr/lib64'],
-                    extra_compile_args = ['-std=c++17', '-fopenmp', '-fPIC', '-nostartfiles'],
-                    extra_link_args = ['-shared'],
+                    include_dirs = [LIBOMP_INCLUDE, PYBIND11_INCLUDE, './src', './src/mstl', './src/mstl/math2', './src/mstl/math2/algebra', './src/mstl/math2/analysis', './src/mstl/math2/spline', './src/mstl/physics'],
+                    # libraries = ['stdc++', 'm', 'gomp', 'python3'],
+                    library_dirs = [LIBDIR],
+                    extra_compile_args = ['-std=c++17', '-fPIC', '-nostartfiles'],
+                    # extra_link_args = ['-shared'],
                     sources = ['./src/EMEWS.cpp', './src/adiabatic_basis.cpp', './src/eigenvalues.cpp', './src/flavour_basis.cpp', './src/input_class.EMEWS.cpp', './src/jacobians.cpp', './src/mixing_angles.cpp', './src/output.EMEWS.cpp', './src/output_matrix.EMEWS.cpp', './src/parameters.cpp', './src/potentials.cpp', './src/RK.EMEWS.cpp', './src/update.EMEWS.cpp', './src/mstl/errors2.cpp', './src/mstl/messages.cpp', './src/mstl/miscellaneous functions.cpp', './src/mstl/stdarg2.cpp', './src/mstl/math2/algebra/column and row vectors.cpp', './src/mstl/math2/algebra/linear algebra.cpp', './src/mstl/math2/algebra/mmatrix.cpp', './src/mstl/math2/analysis/algorithm3.cpp', './src/mstl/math2/analysis/complex2.cpp', './src/mstl/math2/analysis/derivative.cpp', './src/mstl/math2/analysis/polynomial.cpp', './src/mstl/math2/analysis/roots.cpp', './src/mstl/math2/analysis/runge kutta.cpp', './src/mstl/math2/analysis/special functions.cpp', './src/mstl/math2/spline/discontinuous.cpp', './src/mstl/math2/spline/interpolation data.cpp', './src/mstl/physics/units and constants.cpp'])
 
 setup_keywords['ext_modules'] = [EMEWS]
