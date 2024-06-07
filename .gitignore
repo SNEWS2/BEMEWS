@@ -1,0 +1,13 @@
+# compiled code and build products
+__pycache__/
+*.pyc
+*.so
+build/
+dist/
+*.egg-info/
+
+# editor-specific
+.vscode/
+
+# output files of EMEWS_example.py
+out/
