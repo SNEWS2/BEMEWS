@@ -37,7 +37,7 @@ double Gamma(double N){ return tgamma(N);}
         }*/
 
 // see Numerical Recipes for the algorithm
-double logGamma(double N){ return gamma(N);}
+double logGamma(double N){ return lgamma(N);}
        /*{ if(N<0.){ throw NEGATIVE_NUMBER("logGamma(double)");}
          double ser; double n=N;
          double c[6]={ 76.18009172947146,-86.50532032941677, 24.01409824083091,
