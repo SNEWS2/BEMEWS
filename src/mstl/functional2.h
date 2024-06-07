@@ -195,10 +195,10 @@ template <typename AType1,typename AType2,typename AType3,typename AType4,typena
 template <class CType,typename RType> struct nullary_member_function : public nullary_function<RType> 
           { typedef CType class_type;};
 
-template <class CType,typename AType,typename RType> struct unary_member_function : public std::unary_function<AType,RType>
+template <class CType,typename AType,typename RType> struct unary_member_function
          { typedef CType class_type;};
 
-template <class CType,typename AType1,typename AType2,typename RType> struct binary_member_function : public std::binary_function<AType1,AType2,RType>
+template <class CType,typename AType1,typename AType2,typename RType> struct binary_member_function
          { typedef CType class_type;};
 
 template <class CType,typename AType1,typename AType2,typename AType3,typename RType> struct ternary_member_function : public ternary_function<AType1,AType2,AType3,RType>
@@ -328,19 +328,19 @@ class pointer_to_quaternary_member_function : public quaternary_member_function<
 // *******************************************************
 // *******************************************************
 
-template <typename Type> struct equal : public std::unary_function<Type,Type>{
+template <typename Type> struct equal {
          Type operator()(const Type &x) const { return x;}
         };
 
-template <typename Type> struct plus : public std::unary_function<Type,Type>{
+template <typename Type> struct plus {
          Type operator()(const Type &x) const { return x;}
         };
 
-template <typename Type> struct square : public std::unary_function<Type,Type>{
+template <typename Type> struct square {
          Type operator()(const Type &x) const { return x*x;}
         };
 
-template <typename Type> struct cube : public std::unary_function<Type,Type>{
+template <typename Type> struct cube {
          Type operator()(const Type &x) const { return x*x*x;}
         };
 
@@ -348,7 +348,7 @@ template <typename Type> struct cube : public std::unary_function<Type,Type>{
 // *******************************************************
 // *******************************************************
 
-template <typename Type> struct exclusive_or : public std::binary_function<Type,Type,Type>{
+template <typename Type> struct exclusive_or {
          Type operator()(const Type &x,const Type &y) const { return x^y;}
         };
 
@@ -364,15 +364,13 @@ public nullary_function<RType>
           };
 
 template <typename AType,typename RType>
-class UNARYFUNCTORBASE : 
-public std::unary_function<AType,RType>
+class UNARYFUNCTORBASE
          { public  : virtual ~UNARYFUNCTORBASE(void){;}
                      virtual RType operator()(AType) const =0;
           };
 
 template <typename AType1,typename AType2,typename RType>
-class BINARYFUNCTORBASE : 
-public std::binary_function<AType1,AType2,RType>
+class BINARYFUNCTORBASE
          { public  : virtual ~BINARYFUNCTORBASE(void){;}
                      virtual RType operator()(AType1,AType2) const =0;
           };
