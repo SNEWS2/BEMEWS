@@ -236,7 +236,7 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
            // quantities needed for the calculation
            
            double maxerror,increase=3.,accuracy;
-           bool repeat, finish, resetflag, output;
+           bool repeat, finish, resetflag, output, firsttime;
            int counterout,step;
 
            // *************
@@ -274,6 +274,8 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
            // ******************************************************
 
            // start of calculation
+           
+           firsttime = true;           
 
            // loop through the domains
            for(int d=0;d<=ND-1;d++)
@@ -317,9 +319,11 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
 
                 if(ID.outputflag==true){ output=true;}
                 if(output==true){ 
-                    Output_Pvslambda(fPvslambda,lambda,Y,Scumulative);
-                    Output_Hvslambda(fHvslambda,lambda,Y,Scumulative);
+                    Output_Pvslambda(firsttime,fPvslambda,lambda,Y,Scumulative);
+                    Output_Hvslambda(firsttime,fHvslambda,lambda,Y,Scumulative);
                    } 
+                   
+                firsttime = false;                   
 
                 // **********************************************************    
 
@@ -433,8 +437,8 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
 
                     if(output==true)
                       { cout<<"\nOutput at\t"<<lambda<<flush;
-                        Output_Pvslambda(fPvslambda,lambda,Y,Scumulative);
-                        Output_Hvslambda(fHvslambda,lambda,Y,Scumulative);
+                        Output_Pvslambda(firsttime,fPvslambda,lambda,Y,Scumulative);
+                        Output_Hvslambda(firsttime,fHvslambda,lambda,Y,Scumulative);
                         //Output_PvsE(fPvsE,outputfilenamestem,lambda,Y,Scumulative);
                         output=false;
                        }

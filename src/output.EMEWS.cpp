@@ -44,7 +44,7 @@ void Close_Output(ofstream &fHvslambda)
 
 // ******************************************************
 
-void Output_Pvslambda(ofstream &fPvslambda,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative)
+void Output_Pvslambda(bool firsttime,ofstream &fPvslambda,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative)
       { array<MATRIX<complex<double>,NF,NF>,NM> VfMSW, dVfMSWdlambda;
 
         double r=sqrt(RE*RE+lambda*lambda+2.*RE*lambda*sin(altitude));
@@ -96,6 +96,19 @@ void Output_Pvslambda(ofstream &fPvslambda,double lambda,vector<vector<array<dou
 	for(i=0;i<=NE-1;i++)
            { fPvslambda.open(fPvslambdafilename[i].c_str(),std::ofstream::app);
              fPvslambda.precision(12);
+             
+             if(firsttime==true){
+                fPvsr<<"lambda [cm] \t r [cm]";
+
+                fPvsr<<"\t P11 \t P12 \t P13 \t P21 \t P22 \t P23 \t P31 \t P32 \t P33";
+                fPvsr<<"\t Pbar11 \t Pbar12 \t Pbar13 \t Pbar21 \t Pbar22 \t Pbar23 \t Pbar31 \t Pbar32 \t Pbar33";
+
+                fPvsr<<"\t Pe1 \t Pe2 \t Pe3 \t Pmu1 \t Pmu2 \t Pmu3 \t Ptau1 \t Ptau2 \t Ptau3";
+                fPvsr<<"\t Pbare1 \t Pbare2 \t Pbare3 \t Pbarmu1 \t Pbarmu2 \t Pbarmu3 \t Pbartau1 \t Pbartau2 \t Pbartau3";
+
+                fPvsr<<"\t Pee \t Pemu \t Petau \t Pmue \t Pmumu \t Pmutau \t Ptaue \t Ptaumu \t Ptautau";
+                fPvsr<<"\t Pbaree \t Pbaremu \t Pbaretau \t Pbarmue \t Pbarmumu \t Pbarmutau \t Pbartaue \t Pbartaumu \t Pbartautau";
+               }             
 
              fPvslambda<<"\n"<<lambda<<"\t"<<r;
 
@@ -188,6 +201,19 @@ void Output_PvsE(ofstream &fPvsE,string outputfilenamestem,double lambda,vector<
 	    }
 
         // *******
+        
+        // *******
+
+        fPvsE<<"E [MeV]";
+
+        fPvsE<<"\t P11 \t P12 \t P13 \t P21 \t P22 \t P23 \t P31 \t P32 \t P33";
+        fPvsE<<"\t Pbar11 \t Pbar12 \t Pbar13 \t Pbar21 \t Pbar22 \t Pbar23 \t Pbar31 \t Pbar32 \t Pbar33";
+
+        fPvsE<<"\t Pe1 \t Pe2 \t Pe3 \t Pmu1 \t Pmu2 \t Pmu3 \t Ptau1 \t Ptau2 \t Ptau3";
+        fPvsE<<"\t Pbare1 \t Pbare2 \t Pbare3 \t Pbarmu1 \t Pbarmu2 \t Pbarmu3 \t Pbartau1 \t Pbartau2 \t Pbartau3";        
+
+        fPvsE<<"\t Pee \t Pemu \t Petau \t Pmue \t Pmumu \t Pmutau \t Ptaue \t Ptaumu \t Ptautau";
+        fPvsE<<"\t Pbaree \t Pbaremu \t Pbaretau \t Pbarmue \t Pbarmumu \t Pbarmutau \t Pbartaue \t Pbartaumu \t Pbartautau";        
 
 	for(i=0;i<=NE-1;i++)
            { fPvsE<<"\n"<<E[i]/(mega*cgs::units::eV); 
@@ -223,7 +249,7 @@ void Output_PvsE(ofstream &fPvsE,string outputfilenamestem,double lambda,vector<
 
 // ************************************************************************
 
-void Output_Hvslambda(ofstream &fHvslambda,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative)
+void Output_Hvslambda(bool firsttime,ofstream &fHvslambda,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative)
           { MATRIX<complex<double>,NF,NF> VfMSW,VfMSWbar;
             MATRIX<complex<double>,NF,NF> Hf,Hfbar;
 
@@ -284,6 +310,10 @@ void Output_Hvslambda(ofstream &fHvslambda,double lambda,vector<vector<array<dou
 	        }
 
          // **************
+         
+         if(firsttime==true){
+            fHvslambda<<"lambda [cm] \t r [cm] \t rho [g/cm^3] \t Ye [] \t HMSW_ee [erg]";
+           }         
 
          fHvslambda<<"\n"<<lambda<<"\t"<<r<<"\t"<<rrho<<"\t"<<YYe;
          fHvslambda<<"\t"<<real(VfMSW[e][e]);
