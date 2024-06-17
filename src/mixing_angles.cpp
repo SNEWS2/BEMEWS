@@ -6,6 +6,10 @@
 using std::complex;
 using std::array;
 
+// ********************************************************************************************************
+
+MATRIX<complex<double>,NF,NF> MixingMatrix(MATRIX<complex<double>,NF,NF> Hf,array<double,NF> k,array<double,NF> dk);
+
 // *********************************************************************
 // *********************************************************************
 // *********************************************************************
@@ -28,7 +32,7 @@ MATRIX<complex<double>,NF,NF> MixingMatrix(MATRIX<complex<double>,NF,NF> Hf,arra
               //if(r2[e]>=r2[mu] && r2[e]>=r2[tau]){ u[e][j]=C<e,e>(Hf,k[j])/sqrt(r2[e]);       u[mu][j]=C<e,mu>(Hf,k[j])/sqrt(r2[e]);     u[tau][j]=C<e,tau>(Hf,k[j])/sqrt(r2[e]);}
               //if(r2[mu]>=r2[e] && r2[mu]>=r2[tau]){ u[e][j]=C<mu,e>(Hf,k[j])/sqrt(r2[mu]);    u[mu][j]=C<mu,mu>(Hf,k[j])/sqrt(r2[mu]);   u[tau][j]=C<mu,tau>(Hf,k[j])/sqrt(r2[mu]);}
               //if(r2[tau]>=r2[e] && r2[tau]>=r2[mu]){ u[e][j]=C<tau,e>(Hf,k[j])/sqrt(r2[tau]); u[mu][j]=C<tau,mu>(Hf,k[j])/sqrt(r2[tau]); u[tau][j]=C<tau,tau>(Hf,k[j])/sqrt(r2[tau]);}
-             
+
               // set the element in the e (top) row to be pure real
               u[e][j]=C<e,e>(Hf,k[j])/sqrt(r2[e]); u[mu][j]=C<e,mu>(Hf,k[j])/sqrt(r2[e]); u[tau][j]=C<e,tau>(Hf,k[j])/sqrt(r2[e]);
             }
@@ -37,17 +41,17 @@ MATRIX<complex<double>,NF,NF> MixingMatrix(MATRIX<complex<double>,NF,NF> Hf,arra
        }
 
 void Evaluate_UV(void) 
-       { UV[nu][0][0] = c12V*c13V * exp(I*etaV[0]);
-         UV[nu][0][1] = s12V*c13V * exp(I*etaV[1]);
+       { UV[nu][0][0] = c12V * c13V * exp(I*etaV[0]);
+         UV[nu][0][1] = s12V * c13V * exp(I*etaV[1]);
          UV[nu][0][2] = s13V * exp(I*(etaV[2]-deltaV));
 
-         UV[nu][1][0] = -(s12V*c23V + c12V*s13V*s23V*exp(I*deltaV)) * exp(I*etaV[0]);
-         UV[nu][1][1] =  (c12V*c23V - s12V*s13V*s23V*exp(I*deltaV)) * exp(I*etaV[1]);
-         UV[nu][1][2] =  c13V*s23V * exp(I*etaV[2]);
+         UV[nu][1][0] = -(s12V * c23V + c12V * s13V * s23V * exp(I*deltaV)) * exp(I*etaV[0]);
+         UV[nu][1][1] =  (c12V * c23V - s12V * s13V * s23V * exp(I*deltaV)) * exp(I*etaV[1]);
+         UV[nu][1][2] =  c13V * s23V * exp(I*etaV[2]);
 
-         UV[nu][2][0] =  (s12V*s23V - c12V*s13V*c23V*exp(I*deltaV)) * exp(I*etaV[0]);
-         UV[nu][2][1] = -(c12V*s23V + s12V*s13V*c23V*exp(I*deltaV)) * exp(I*etaV[1]);
-         UV[nu][2][2] =  c13V*c23V * exp(I*etaV[2]);
+         UV[nu][2][0] =  (s12V * s23V - c12V * s13V * c23V * exp(I*deltaV)) * exp(I*etaV[0]);
+         UV[nu][2][1] = -(c12V * s23V + s12V * s13V * c23V * exp(I*deltaV)) * exp(I*etaV[1]);
+         UV[nu][2][2] =  c13V * c23V * exp(I*etaV[2]);
 
          UV[antinu]=Conjugate(UV[nu]);
         }

@@ -217,14 +217,14 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
            // mixing matrices at initial point, not recycled
            U0 = vector<vector<MATRIX<complex<double>,NF,NF> > >(NM,vector<MATRIX<complex<double>,NF,NF> >(NE)); 
 
-           // mixing angles to MSW basis at initial point and assign A0
+           // mixing angles to MSW basis at initial point
 	   for(i=0;i<=NE-1;i++)
-              { Hf0=HfV[nu][i];//+VfMSW0; 
+              { Hf0=HfV[nu][i]+VfMSW0;
                 k0=k(Hf0);
                 deltak0=deltak(k0);
                 U0[nu][i]=MixingMatrix(Hf0,k0,deltak0);
 
-                Hfbar0=HfV[antinu][i];//-VfMSW0;
+                Hfbar0=HfV[antinu][i]+VfMSWbar0;
                 kbar0=kbar(Hfbar0);
                 deltakbar0=deltakbar(kbar0);
                 U0[antinu][i]=MixingMatrix(Hfbar0,kbar0,deltakbar0);
@@ -236,7 +236,7 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
            // quantities needed for the calculation
            
            double maxerror,increase=3.,accuracy;
-           bool repeat, finish, resetflag, output, firsttime;
+           bool repeat, finish, resetflag, output, firsttime, lasttime;
            int counterout,step;
 
            // *************
@@ -275,7 +275,8 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
 
            // start of calculation
            
-           firsttime = true;           
+           firsttime = true;                  
+           lasttime = false;
 
            // loop through the domains
            for(int d=0;d<=ND-1;d++)
@@ -319,7 +320,7 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
 
                 if(ID.outputflag==true){ output=true;}
                 if(output==true){ 
-                    Output_Pvslambda(firsttime,fPvslambda,lambda,Y,Scumulative);
+                    Output_Pvslambda(firsttime,lasttime,fPvslambda,lambda,Y,Scumulative);
                     Output_Hvslambda(firsttime,fHvslambda,lambda,Y,Scumulative);
                    } 
                    
@@ -437,9 +438,9 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
 
                     if(output==true)
                       { cout<<"\nOutput at\t"<<lambda<<flush;
-                        Output_Pvslambda(firsttime,fPvslambda,lambda,Y,Scumulative);
+                        Output_Pvslambda(firsttime,lasttime,fPvslambda,lambda,Y,Scumulative);
                         Output_Hvslambda(firsttime,fHvslambda,lambda,Y,Scumulative);
-                        //Output_PvsE(fPvsE,outputfilenamestem,lambda,Y,Scumulative);
+                        //Output_PvsE(lasttime,fPvsE,outputfilenamestem,lambda,Y,Scumulative);
                         output=false;
                        }
 
@@ -458,8 +459,18 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
                    } 
                 else{ // output at the end of the code
                       if(ID.outputflag==true){ output=true;}
+                      lasttime = true;
+                                         
+                      for(i=0;i<=NE-1;i++){
+                          for(state m=nu;m<=antinu;m++){ 
+                              // take into account the density jump from Earth back to vacuum
+                              Scumulative[m][i] = Adjoint(UV[m])*U0[m][i] * MATRIX<complex<double>,NF,NF>(Scumulative[m][i]); 
+                             }
+                         }
+
                       if(output==true){ 
-                          Output_PvsE(fPvsE,outputfilenamestem,lambdamax,Y,Scumulative);
+                          Output_Pvslambda(firsttime,lasttime,fPvslambda,lambda,Y,Scumulative);
+                          Output_PvsE(lasttime,fPvsE,outputfilenamestem,lambdamax,Y,Scumulative);
                           output=false;
                          }
                      } 

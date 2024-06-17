@@ -32,7 +32,7 @@ void Initialize_Output(string outputfilenamestem,ofstream &fPvslambda,ofstream &
                }
 
            filename.str("");
-           filename << outputfilenamestem <<string(":H.dat");
+           filename << outputfilenamestem <<string(":Hvslambda.dat");
            fHvslambda.open((filename.str()).c_str());
            fHvslambda.precision(12);
           }
@@ -44,7 +44,7 @@ void Close_Output(ofstream &fHvslambda)
 
 // ******************************************************
 
-void Output_Pvslambda(bool firsttime,ofstream &fPvslambda,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative)
+void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative)
       { array<MATRIX<complex<double>,NF,NF>,NM> VfMSW, dVfMSWdlambda;
 
         double r=sqrt(RE*RE+lambda*lambda+2.*RE*lambda*sin(altitude));
@@ -65,11 +65,14 @@ void Output_Pvslambda(bool firsttime,ofstream &fPvslambda,double lambda,vector<v
       
         int i;
         #pragma omp parallel for schedule(static)
-	for(i=0;i<=NE-1;i++)
-           { Hf[nu][i]=HfV[nu][i] + VfMSW[nu];
-             kk[nu][i]=k(Hf[nu][i]);
-	     dkk[nu][i]=deltak(kk[nu][i]);
-	     UU[nu][i]=MixingMatrix(Hf[nu][i],kk[nu][i],dkk[nu][i]);
+        for(i=0;i<=NE-1;i++)
+           { if(lasttime==false){ 
+                Hf[nu][i]=HfV[nu][i] + VfMSW[nu];
+                kk[nu][i]=k(Hf[nu][i]);
+   	        dkk[nu][i]=deltak(kk[nu][i]);
+	        UU[nu][i]=MixingMatrix(Hf[nu][i],kk[nu][i],dkk[nu][i]);
+	       }
+	     else{ UU[nu][i] = UV[nu];}
 
 	     Sa[nu][i] = W(Y[nu][i]) * B(Y[nu][i]);		
 
@@ -80,10 +83,13 @@ void Output_Pvslambda(bool firsttime,ofstream &fPvslambda,double lambda,vector<v
 
              // *******
 
-	     Hf[antinu][i]=HfV[antinu][i] + VfMSW[antinu];
-	     kk[antinu][i]=kbar(Hf[antinu][i]);
-	     dkk[antinu][i]=deltakbar(kk[antinu][i]);
-	     UU[antinu][i]=MixingMatrix(Hf[antinu][i],kk[antinu][i],dkk[antinu][i]);
+             if(lasttime==false){ 
+	        Hf[antinu][i]=HfV[antinu][i] + VfMSW[antinu];
+    	        kk[antinu][i]=kbar(Hf[antinu][i]);
+	        dkk[antinu][i]=deltakbar(kk[antinu][i]);
+	        UU[antinu][i]=MixingMatrix(Hf[antinu][i],kk[antinu][i],dkk[antinu][i]);
+	       }
+	     else{ UU[antinu][i] = UV[antinu];}	        
       
 	     Sa[antinu][i] = W(Y[antinu][i]) * B(Y[antinu][i]);
 
@@ -143,7 +149,7 @@ void Output_Pvslambda(bool firsttime,ofstream &fPvslambda,double lambda,vector<v
 
 // ************************************************************************
 
-void Output_PvsE(ofstream &fPvsE,string outputfilenamestem,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative)
+void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative)
       { string cmdotdat("cm.dat");
         stringstream filename;
 
@@ -174,10 +180,13 @@ void Output_PvsE(ofstream &fPvsE,string outputfilenamestem,double lambda,vector<
         int i;
         #pragma omp parallel for schedule(static)
 	for(i=0;i<=NE-1;i++)
-           { Hf[nu][i]=HfV[nu][i] + VfMSW[nu];
-             kk[nu][i]=k(Hf[nu][i]);
-	     dkk[nu][i]=deltak(kk[nu][i]);
-	     UU[nu][i]=MixingMatrix(Hf[nu][i],kk[nu][i],dkk[nu][i]);
+           { if(lasttime==false){ 
+                Hf[nu][i]=HfV[nu][i] + VfMSW[nu];
+                kk[nu][i]=k(Hf[nu][i]);
+  	        dkk[nu][i]=deltak(kk[nu][i]);
+	        UU[nu][i]=MixingMatrix(Hf[nu][i],kk[nu][i],dkk[nu][i]);
+	       }
+	     else{ UU[nu][i] = UV[nu];}	        
 
 	     Sa[nu][i] = W(Y[nu][i]) * B(Y[nu][i]);
 
@@ -187,10 +196,14 @@ void Output_PvsE(ofstream &fPvsE,string outputfilenamestem,double lambda,vector<
 	     Sf[nu][i] = UU[nu][i] * Smf[nu][i];
 
 	     // *********
-	     Hf[antinu][i]=HfV[antinu][i] + VfMSW[antinu];
-	     kk[antinu][i]=kbar(Hf[antinu][i]);
-	     dkk[antinu][i]=deltakbar(kk[antinu][i]);
-	     UU[antinu][i]=MixingMatrix(Hf[antinu][i],kk[antinu][i],dkk[antinu][i]);
+	     
+	     if(lasttime==false){ 
+	        Hf[antinu][i]=HfV[antinu][i] + VfMSW[antinu];
+  	        kk[antinu][i]=kbar(Hf[antinu][i]);
+	        dkk[antinu][i]=deltakbar(kk[antinu][i]);
+	        UU[antinu][i]=MixingMatrix(Hf[antinu][i],kk[antinu][i],dkk[antinu][i]);
+	       }
+	     else{ UU[antinu][i] = UV[antinu];}       
        
 	     Sa[antinu][i] = W(Y[antinu][i]) * B(Y[antinu][i]);
 
