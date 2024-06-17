@@ -62,8 +62,8 @@ void K(double lambda,double dlambda,vector<vector<array<double,NY> > > &Y,vector
 
             // *************
 
-            r = sqrt( RE*RE + lambda*lambda + 2.*RE*lambda*sin(altitude) );
-            drdlambda = (RE*sin(altitude)+lambda)/r;
+            r = sqrt( RE*RE + lambda*lambda - 2.*RE*lambda*sin(-altitude) );
+            drdlambda = (lambda - RE*sin(-altitude))/r;
 
             rrho=rho(r);
             drrhodr=rho.Derivative(r);

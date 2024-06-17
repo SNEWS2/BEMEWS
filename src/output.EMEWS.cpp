@@ -47,7 +47,7 @@ void Close_Output(ofstream &fHvslambda)
 void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative)
       { array<MATRIX<complex<double>,NF,NF>,NM> VfMSW, dVfMSWdlambda;
 
-        double r=sqrt(RE*RE+lambda*lambda+2.*RE*lambda*sin(altitude));
+        double r = sqrt( RE*RE + lambda*lambda - 2.*RE*lambda*sin(-altitude) );
         double rrho=rho(r);
         double YYe=Ye(r);
 
@@ -66,34 +66,32 @@ void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double l
         int i;
         #pragma omp parallel for schedule(static)
         for(i=0;i<=NE-1;i++)
-           { if(lasttime==false){ 
-                Hf[nu][i]=HfV[nu][i] + VfMSW[nu];
-                kk[nu][i]=k(Hf[nu][i]);
-   	        dkk[nu][i]=deltak(kk[nu][i]);
-	        UU[nu][i]=MixingMatrix(Hf[nu][i],kk[nu][i],dkk[nu][i]);
-	       }
-	     else{ UU[nu][i] = UV[nu];}
+           { Hf[nu][i]=HfV[nu][i] + VfMSW[nu];
+             kk[nu][i]=k(Hf[nu][i]);
+   	     dkk[nu][i]=deltak(kk[nu][i]);
+	     UU[nu][i]=MixingMatrix(Hf[nu][i],kk[nu][i],dkk[nu][i]);
 
 	     Sa[nu][i] = W(Y[nu][i]) * B(Y[nu][i]);		
 
-	     Sm[nu][i] = Sa[nu][i] * Scumulative[nu][i];
+	     if(lasttime==false){ Sm[nu][i] = Sa[nu][i] * Scumulative[nu][i];}
+	     else{ Sm[nu][i] = Adjoint(UV[nu])*UU[nu][i] * Sa[nu][i] * Scumulative[nu][i];}
+	     	     
              Smf[nu][i]= Sm[nu][i] * Adjoint(UV[nu]);
 	     Sfm[nu][i] = UU[nu][i] * Sm[nu][i];
 	     Sf[nu][i] = UU[nu][i] * Smf[nu][i];
 
              // *******
 
-             if(lasttime==false){ 
-	        Hf[antinu][i]=HfV[antinu][i] + VfMSW[antinu];
-    	        kk[antinu][i]=kbar(Hf[antinu][i]);
-	        dkk[antinu][i]=deltakbar(kk[antinu][i]);
-	        UU[antinu][i]=MixingMatrix(Hf[antinu][i],kk[antinu][i],dkk[antinu][i]);
-	       }
-	     else{ UU[antinu][i] = UV[antinu];}	        
+             Hf[antinu][i]=HfV[antinu][i] + VfMSW[antinu];
+    	     kk[antinu][i]=kbar(Hf[antinu][i]);
+	     dkk[antinu][i]=deltakbar(kk[antinu][i]);
+	     UU[antinu][i]=MixingMatrix(Hf[antinu][i],kk[antinu][i],dkk[antinu][i]);
       
 	     Sa[antinu][i] = W(Y[antinu][i]) * B(Y[antinu][i]);
 
-	     Sm[antinu][i] = Sa[antinu][i] * Scumulative[antinu][i];
+	     if(lasttime==false){ Sm[antinu][i] = Sa[antinu][i] * Scumulative[antinu][i];}
+	     else{ Sm[antinu][i] = Adjoint(UV[antinu])*UU[antinu][i] * Sa[antinu][i] * Scumulative[antinu][i];}
+	     
              Smf[antinu][i]= Sm[antinu][i] * Adjoint(UV[antinu]);
 	     Sfm[antinu][i] = UU[antinu][i] * Sm[antinu][i];
 	     Sf[antinu][i] = UU[antinu][i] * Smf[antinu][i];
@@ -159,7 +157,7 @@ void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double 
 
         // ******
 
-        r=sqrt(RE*RE+lambda*lambda+2.*RE*lambda*sin(altitude));
+        r = sqrt( RE*RE + lambda*lambda - 2.*RE*lambda*sin(-altitude) );
         rrho=rho(r);
         YYe=Ye(r); 
 
@@ -180,34 +178,32 @@ void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double 
         int i;
         #pragma omp parallel for schedule(static)
 	for(i=0;i<=NE-1;i++)
-           { if(lasttime==false){ 
-                Hf[nu][i]=HfV[nu][i] + VfMSW[nu];
-                kk[nu][i]=k(Hf[nu][i]);
-  	        dkk[nu][i]=deltak(kk[nu][i]);
-	        UU[nu][i]=MixingMatrix(Hf[nu][i],kk[nu][i],dkk[nu][i]);
-	       }
-	     else{ UU[nu][i] = UV[nu];}	        
+           { Hf[nu][i]=HfV[nu][i] + VfMSW[nu];
+             kk[nu][i]=k(Hf[nu][i]);
+  	     dkk[nu][i]=deltak(kk[nu][i]);
+	     UU[nu][i]=MixingMatrix(Hf[nu][i],kk[nu][i],dkk[nu][i]);
 
 	     Sa[nu][i] = W(Y[nu][i]) * B(Y[nu][i]);
 
-	     Sm[nu][i] = Sa[nu][i] * Scumulative[nu][i];
+             if(lasttime==false){ Sm[nu][i] = Sa[nu][i] * Scumulative[nu][i];}
+	     else{ Sm[nu][i] = Adjoint(UV[nu])*UU[nu][i] * Sa[nu][i] * Scumulative[nu][i];}
+             
              Smf[nu][i]= Sm[nu][i] * Adjoint(UV[nu]);
 	     Sfm[nu][i] = UU[nu][i] * Sm[nu][i];
 	     Sf[nu][i] = UU[nu][i] * Smf[nu][i];
 
 	     // *********
 	     
-	     if(lasttime==false){ 
-	        Hf[antinu][i]=HfV[antinu][i] + VfMSW[antinu];
-  	        kk[antinu][i]=kbar(Hf[antinu][i]);
-	        dkk[antinu][i]=deltakbar(kk[antinu][i]);
-	        UU[antinu][i]=MixingMatrix(Hf[antinu][i],kk[antinu][i],dkk[antinu][i]);
-	       }
-	     else{ UU[antinu][i] = UV[antinu];}       
+             Hf[antinu][i]=HfV[antinu][i] + VfMSW[antinu];
+  	     kk[antinu][i]=kbar(Hf[antinu][i]);
+	     dkk[antinu][i]=deltakbar(kk[antinu][i]);
+	     UU[antinu][i]=MixingMatrix(Hf[antinu][i],kk[antinu][i],dkk[antinu][i]);
        
 	     Sa[antinu][i] = W(Y[antinu][i]) * B(Y[antinu][i]);
 
-	     Sm[antinu][i] = Sa[antinu][i] * Scumulative[antinu][i];
+             if(lasttime==false){ Sm[antinu][i] = Sa[antinu][i] * Scumulative[antinu][i];}
+	     else{ Sm[antinu][i] = Adjoint(UV[antinu])*UU[antinu][i] * Sa[antinu][i] * Scumulative[antinu][i];}
+	     	     
              Smf[antinu][i]= Sm[antinu][i] * Adjoint(UV[antinu]);
 	     Sfm[antinu][i] = UU[antinu][i] * Sm[antinu][i];
 	     Sf[antinu][i] = UU[antinu][i] * Smf[antinu][i];
@@ -280,7 +276,7 @@ void Output_Hvslambda(bool firsttime,ofstream &fHvslambda,double lambda,vector<v
 
             // *************
 
-            r=sqrt(RE*RE+lambda*lambda+2.*RE*lambda*sin(altitude));
+            r = sqrt( RE*RE + lambda*lambda - 2.*RE*lambda*sin(-altitude) );
             rrho=rho(r);
             YYe=Ye(r); 
 

@@ -136,20 +136,24 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
 
            rho.FindDomains();
 
-           lambdas.push_back(lambdamin+0.0*cgs::units::cm); 
+           if(altitude < 0.){ lambdas.push_back(lambdamin+1.0*cgs::units::cm);}
+           else{ lambdas.push_back(0.);}
+           
            for(int d=1;d<=static_cast<int>(rho.NDiscontinuities());d++)
                { r=rho.Discontinuity(d); 
-                 if(r>RE*cos(altitude))
-                   { lambdas.push_back( -RE*sin(altitude)-sqrt(r-RE*cos(altitude))*sqrt(r+RE*cos(altitude)) );
-                     lambdas.push_back( -RE*sin(altitude)+sqrt(r-RE*cos(altitude))*sqrt(r+RE*cos(altitude)) );
+                 if(r>RE*cos(altitude) && altitude<=0 )
+                   { lambdas.push_back( RE*sin(-altitude)-sqrt(r-RE*cos(altitude))*sqrt(r+RE*cos(altitude)) );
+                     lambdas.push_back( RE*sin(-altitude)+sqrt(r-RE*cos(altitude))*sqrt(r+RE*cos(altitude)) );
                     } 
                 }
-           lambdas.push_back(lambdamax-0.0*cgs::units::cm); 
-
+                
+           if(altitude < 0.){ lambdas.push_back(lambdamax-1.0*cgs::units::cm);}
+           else{ lambdas.push_back(0.);}
+           
            sort(lambdas.begin(),lambdas.end());
+           
            ND=lambdas.size()-1;
-
-           cout<<"\n\nNumber of domains\t"<<ND;
+           cout<<"\n\nNumber of domains\t"<<ND; cout.flush();
 
            // ******************************************************
 
@@ -283,7 +287,7 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
               { if(d==0){ lambdamin=lambdas[d];} else{ lambdamin=lambdas[d]+1.*cgs::units::cm;}
                 if(d==ND-1){ lambdamax=lambdas[d+1];} else{ lambdamax=lambdas[d+1]-1.*cgs::units::cm;}
 
-                cout<<"\nDomain\t"<<d<<":\t"<<lambdamin<<"\tto\t"<<lambdamax; cout.flush();
+                cout<<"\nDomain\t"<<d+1<<":\t"<<lambdamin<<"\tto\t"<<lambdamax; cout.flush();
 
                 // **********************************************************    
 
@@ -460,16 +464,9 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
                 else{ // output at the end of the code
                       if(ID.outputflag==true){ output=true;}
                       lasttime = true;
-                                         
-                      for(i=0;i<=NE-1;i++){
-                          for(state m=nu;m<=antinu;m++){ 
-                              // take into account the density jump from Earth back to vacuum
-                              Scumulative[m][i] = Adjoint(UV[m])*U0[m][i] * MATRIX<complex<double>,NF,NF>(Scumulative[m][i]); 
-                             }
-                         }
 
                       if(output==true){ 
-                          Output_Pvslambda(firsttime,lasttime,fPvslambda,lambda,Y,Scumulative);
+                          Output_Pvslambda(firsttime,lasttime,fPvslambda,lambdamax,Y,Scumulative);
                           Output_PvsE(lasttime,fPvsE,outputfilenamestem,lambdamax,Y,Scumulative);
                           output=false;
                          }
