@@ -14,6 +14,6 @@ void Output_Pvslambda(bool firsttime,bool lasttime,std::ofstream &fPvslambda,dou
 
 void Output_PvsE(bool lasttime,std::ofstream &fPvsE,std::string outputfilenamestem,double lambda,std::vector<std::vector<std::array<double,NY> > > &Y,std::vector<std::vector<MATRIX<std::complex<double>,NF,NF> > > &Scumulative);
 
-void Output_Hvslambda(bool firsttime,std::ofstream &fHvslambda,double lambda,std::vector<std::vector<std::array<double,NY> > > &Y,std::vector<std::vector<MATRIX<std::complex<double>,NF,NF> > > &Scumulative);
+void Output_Hvslambda(bool firsttime,bool lasttime,std::ofstream &fHvslambda,double lambda,std::vector<std::vector<std::array<double,NY> > > &Y,std::vector<std::vector<MATRIX<std::complex<double>,NF,NF> > > &Scumulative);
 
 #endif

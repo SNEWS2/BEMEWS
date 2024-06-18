@@ -61,9 +61,9 @@ void Profile_loader(InputDataEMEWS ID,string &outputfilenamestem)
 
        // *********************
 
-       lambdamin = 0.;
-       if(altitude>=0.){ lambdamax=0.;}
-       else{ lambdamax=2.*RE*sin(-altitude);}
+       lambdamin0 = 0.;
+       if(altitude>=0.){ lambdamax0=0.;}
+       else{ lambdamax0=2.*RE*sin(-altitude);}
       }
 
 // **********************************************************
@@ -86,8 +86,8 @@ void Neutrino_loader(InputDataEMEWS ID,std::string &outputfilenamestem)
        deltaV = ID.deltaCP;
 
        etaV[0] = 0.;
-       etaV[1] = 0.;      
-       etaV[2] = deltaV; // set this phase so that the top row of the PMNS matrix is pure real       
+       etaV[1] = 0.;
+       etaV[2] = deltaV;
 
        // *********************
 
@@ -122,11 +122,11 @@ void Neutrino_loader(InputDataEMEWS ID,std::string &outputfilenamestem)
        theta13V*=M_PI/180.; c13V=cos(theta13V); s13V=sin(theta13V);
        theta23V*=M_PI/180.; c23V=cos(theta23V); s23V=sin(theta23V);
 
-       deltaV*=M_PI/180.; cdeltaV=cos(deltaV); sdeltaV=sin(deltaV);
+       deltaV*=M_PI/180.;   cdeltaV=cos(deltaV); sdeltaV=sin(deltaV);
 
        etaV[0]*=M_PI/180.;
        etaV[1]*=M_PI/180.;
-       etaV[2]*=M_PI/180.;      
+       etaV[2]*=M_PI/180.;
       }
 
        

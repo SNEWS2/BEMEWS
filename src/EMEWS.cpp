@@ -130,24 +130,24 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
            // integration domians
 
            // ND is the number of domains, rs the rmin,rmax and the discontinutities
-           double lambda,lambda0,dlambda,dlambdamin, r;           
+           double lambda,lambda0,dlambda,deltalambdamin, r;           
            int ND;
            vector<double> lambdas;
 
            rho.FindDomains();
 
-           if(altitude < 0.){ lambdas.push_back(lambdamin+1.0*cgs::units::cm);}
+           if(altitude < 0.){ lambdas.push_back(lambdamin0+0.0*cgs::units::cm);}
            else{ lambdas.push_back(0.);}
            
            for(int d=1;d<=static_cast<int>(rho.NDiscontinuities());d++)
                { r=rho.Discontinuity(d); 
-                 if(r>RE*cos(altitude) && altitude<=0 )
+                 if(r>RE*cos(altitude) && altitude<0 )
                    { lambdas.push_back( RE*sin(-altitude)-sqrt(r-RE*cos(altitude))*sqrt(r+RE*cos(altitude)) );
                      lambdas.push_back( RE*sin(-altitude)+sqrt(r-RE*cos(altitude))*sqrt(r+RE*cos(altitude)) );
                     } 
                 }
                 
-           if(altitude < 0.){ lambdas.push_back(lambdamax-1.0*cgs::units::cm);}
+           if(altitude < 0.){ lambdas.push_back(lambdamax0-0.0*cgs::units::cm);}
            else{ lambdas.push_back(0.);}
            
            sort(lambdas.begin(),lambdas.end());
@@ -282,6 +282,14 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
            firsttime = true;                  
            lasttime = false;
 
+           // take into account the density jump from vacuum into Earth           
+	   #pragma omp parallel for schedule(static)
+           for(i=0;i<=NE-1;i++){
+               for(state m=nu;m<=antinu;m++){ 
+                   Scumulative[m][i] = Adjoint(U0[m][i])*UV[m];
+                  }
+	      }           
+
            // loop through the domains
            for(int d=0;d<=ND-1;d++)
               { if(d==0){ lambdamin=lambdas[d];} else{ lambdamin=lambdas[d]+1.*cgs::units::cm;}
@@ -292,14 +300,11 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
                 // **********************************************************    
 
                 // initialize at beginning of every domain
-                lambda=lambdamin; dlambda=1e-3*cgs::units::cm; dlambdamin=4.*lambda*numeric_limits<double>::epsilon();
+                lambda=lambdamin; dlambda=1e-3*cgs::units::cm; deltalambdamin=4.*lambda*numeric_limits<double>::epsilon();
 
 		#pragma omp parallel for schedule(static)
                 for(i=0;i<=NE-1;i++){
                     for(state m=nu;m<=antinu;m++){ 
-                        // take into account the density jump from vacuum into Earth
-                        Scumulative[m][i] = Adjoint(U0[m][i])*UV[m];
-
                         Y[m][i][0]=M_PI/2.;
 	                Y[m][i][1]=M_PI/2.;
 		        Y[m][i][2]=M_PI/2.;
@@ -309,7 +314,7 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
                 	Y[m][i][6]=M_PI/2.;
                         Y[m][i][7]=0;
 
-                        Y[m][i][8]=1.; // The determinant of the S matrix
+                        Y[m][i][8]=1.;
 
                         Y[m][i][9]=0.;
   	            	Y[m][i][10]=0.;
@@ -317,19 +322,25 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
 		       }
 		   }
 
-                finish=false;
+                finish = false;
                 counterout=1;
 
                 // *********
 
                 if(ID.outputflag==true){ output=true;}
                 if(output==true){ 
-                    Output_Pvslambda(firsttime,lasttime,fPvslambda,lambda,Y,Scumulative);
-                    Output_Hvslambda(firsttime,fHvslambda,lambda,Y,Scumulative);
-                   } 
-                   
-                firsttime = false;                   
+                    if(firsttime==true){                 
+                       Output_Pvslambda(firsttime,lasttime,fPvslambda,lambdamin,Y,Scumulative);
+                       Output_Hvslambda(firsttime,lasttime,fHvslambda,lambdamin,Y,Scumulative);
+                      }                                        
+                      
+                    firsttime = false;                                                                   
 
+                    Output_Pvslambda(firsttime,lasttime,fPvslambda,lambdamin,Y,Scumulative);
+                    Output_Hvslambda(firsttime,lasttime,fHvslambda,lambdamin,Y,Scumulative);
+                    
+                    output = false;                    
+                   } 
                 // **********************************************************    
 
                 // within each domain integrate over r
@@ -395,7 +406,7 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
                        // decide whether to accept step, if not adjust step size
                        if(maxerror>accuracy){
                           dlambda*=0.9*pow(accuracy/maxerror,1./(NRKOrder-1.));
-                          if(dlambda>dlambdamin){ repeat=true;}
+                          if(dlambda>deltalambdamin){ repeat = true;}
                          }
 
                         // reset integration variables to those at beginning of step
@@ -410,12 +421,12 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
                         for(state m=nu;m<=antinu;m++){                         
                             SS=W(Y[m][i])*B(Y[m][i]); 
 
-                            resetflag=false;
+                            resetflag = false;
 
                             // test that the S matrix is close to diagonal
-          	            if( norm(SS[0][0])+0.1<norm(SS[0][1]) || norm(SS[0][0])+0.1<norm(SS[0][2]) ){ resetflag=true;}
-                	    if( norm(SS[0][1])+0.1<norm(SS[0][2]) ){ resetflag=true;}
-	                    if( norm(SS[2][2])+0.1<norm(SS[1][2]) ){ resetflag=true;}
+          	            if( norm(SS[0][0])+0.1<norm(SS[0][1]) || norm(SS[0][0])+0.1<norm(SS[0][2]) ){ resetflag = true;}
+                	    if( norm(SS[0][1])+0.1<norm(SS[0][2]) ){ resetflag = true;}
+	                    if( norm(SS[2][2])+0.1<norm(SS[1][2]) ){ resetflag = true;}
 
 	                    if(resetflag!=false)
                               { // reset the S matrices
@@ -442,16 +453,18 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
 
                     if(output==true)
                       { cout<<"\nOutput at\t"<<lambda<<flush;
+                      
                         Output_Pvslambda(firsttime,lasttime,fPvslambda,lambda,Y,Scumulative);
-                        Output_Hvslambda(firsttime,fHvslambda,lambda,Y,Scumulative);
+                        Output_Hvslambda(firsttime,lasttime,fHvslambda,lambda,Y,Scumulative);
                         //Output_PvsE(lasttime,fPvsE,outputfilenamestem,lambda,Y,Scumulative);
+                        
                         output=false;
                        }
 
                     // adjust step size based on RK error - could be moved up to RK section but better left here in case adjustments are necessary based on new S matrices
                     dlambda=min(dlambda*pow(accuracy/maxerror,1./max(1,NRKOrder)),increase*dlambda);
-                    dlambdamin=4.*lambda*numeric_limits<double>::epsilon();
-                    dlambda=max(dlambda,dlambdamin); 
+                    deltalambdamin=4.*lambda*numeric_limits<double>::epsilon();
+                    dlambda=max(dlambda,deltalambdamin); 
 
                    }while(finish==false);
 
@@ -462,13 +475,18 @@ vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
                     Scumulative=UpdateSm(lambdaminus,lambdaplus,Y,Scumulative);
                    } 
                 else{ // output at the end of the code
-                      if(ID.outputflag==true){ output=true;}
-                      lasttime = true;
-
+                      if(ID.outputflag==true){ output = true;}
                       if(output==true){ 
                           Output_Pvslambda(firsttime,lasttime,fPvslambda,lambdamax,Y,Scumulative);
-                          Output_PvsE(lasttime,fPvsE,outputfilenamestem,lambdamax,Y,Scumulative);
-                          output=false;
+                          Output_Hvslambda(firsttime,lasttime,fHvslambda,lambdamax,Y,Scumulative);                          
+                          
+                          lasttime = true;                          
+                          
+                          Output_Pvslambda(firsttime,lasttime,fPvslambda,lambdamax,Y,Scumulative);
+                          Output_Hvslambda(firsttime,lasttime,fHvslambda,lambdamax,Y,Scumulative);                          
+                          Output_PvsE(lasttime,fPvsE,outputfilenamestem,lambdamax,Y,Scumulative);                          
+                          
+                          output = false;
                          }
                      } 
 

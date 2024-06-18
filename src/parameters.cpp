@@ -46,8 +46,7 @@ array<MATRIX<complex<double>,NF,NF>,NM> UV;
 // *******************************************************
 
 // miniumum and maximum radius for calculation
-double lambdamin, lambdamax;
-double rmin, rmax;
+double lambdamin,lambdamin0, lambdamax,lambdamax0;
 double RE;
 double altitude, azimuth;
 

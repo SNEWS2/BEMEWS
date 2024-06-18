@@ -19,8 +19,9 @@ vector<vector<MATRIX<complex<double>,NF,NF> > > UpdateSm(double lambdaminus,doub
             vector<vector<MATRIX<complex<double>,NF,NF> > > Sm(NM,vector<MATRIX<complex<double>,NF,NF> >(NE));
 
             double r, rrho, YYe;
+            int i;            
 
-            // multiply SMSW by the mixing matrix at rminus
+            // multiply by the mixing matrix at rminus
             r=sqrt(RE*RE+lambdaminus*lambdaminus-2.*RE*lambdaminus*sin(-altitude));
             rrho = rho(r);
             YYe = Ye(r); 
@@ -31,7 +32,6 @@ vector<vector<MATRIX<complex<double>,NF,NF> > > UpdateSm(double lambdaminus,doub
 
             VfMSW[antinu] = -VfMSW[nu];
 
-            int i;
 	    #pragma omp parallel for schedule(static) private(Hf,Hfbar,kk,kkbar,dkk,dkkbar,UU,UUbar)
 	    for(i=0;i<=NE-1;i++)
                { Hf=HfV[nu][i]+VfMSW[nu];
@@ -47,7 +47,7 @@ vector<vector<MATRIX<complex<double>,NF,NF> > > UpdateSm(double lambdaminus,doub
             	 Sm[antinu][i]=UUbar * W(Y[antinu][i]) * B(Y[antinu][i]) * Smprior[antinu][i];
 		}
 
-            // multiply SMSW by the adjoint of the mixing matrix at rplus
+            // multiply by the adjoint of the mixing matrix at rplus
             r=sqrt(RE*RE+lambdaplus*lambdaplus-2.*RE*lambdaplus*sin(-altitude));
             rrho = rho(r);
             YYe = Ye(r); 

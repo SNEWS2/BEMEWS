@@ -25,8 +25,8 @@ void Initialize_Output(string outputfilenamestem,ofstream &fPvslambda,ofstream &
 
            for(int i=0;i<=NE-1;i++)
               { filename.str("");
-                if(NE>1){ filename << outputfilenamestem << string(":E=") << ((NE-1.-i)*EminMeV+i*EmaxMeV)/(NE-1.) << string("MeV:Pvsr.dat");}
-                else{ filename << outputfilenamestem << string(":E=") << EminMeV << string("MeV:Pvsr.dat");}
+                if(NE>1){ filename << outputfilenamestem << string(":E=") << ((NE-1.-i)*EminMeV+i*EmaxMeV)/(NE-1.) << string("MeV:Pvslambda.dat");}
+                else{ filename << outputfilenamestem << string(":E=") << EminMeV << string("MeV:Pvslambda.dat");}
                 fPvslambdafilename[i]=filename.str();
                 fPvslambda.open(fPvslambdafilename[i].c_str()); fPvslambda.close(); // clears the file
                }
@@ -73,13 +73,18 @@ void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double l
 
 	     Sa[nu][i] = W(Y[nu][i]) * B(Y[nu][i]);		
 
-	     if(lasttime==false){ Sm[nu][i] = Sa[nu][i] * Scumulative[nu][i];}
+	     if(firsttime==false && lasttime==false){ Sm[nu][i] = Sa[nu][i] * Scumulative[nu][i];}
 	     else{ Sm[nu][i] = Adjoint(UV[nu])*UU[nu][i] * Sa[nu][i] * Scumulative[nu][i];}
 	     	     
              Smf[nu][i]= Sm[nu][i] * Adjoint(UV[nu]);
-	     Sfm[nu][i] = UU[nu][i] * Sm[nu][i];
-	     Sf[nu][i] = UU[nu][i] * Smf[nu][i];
-
+             
+	     if(lasttime==false){ 
+	        Sfm[nu][i] = UU[nu][i] * Sm[nu][i];
+	        Sf[nu][i] = UU[nu][i] * Smf[nu][i];
+	       } 
+             else{ Sfm[nu][i] = UV[nu] * Sm[nu][i];
+	           Sf[nu][i] = UV[nu] * Smf[nu][i];
+	          }
              // *******
 
              Hf[antinu][i]=HfV[antinu][i] + VfMSW[antinu];
@@ -89,12 +94,18 @@ void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double l
       
 	     Sa[antinu][i] = W(Y[antinu][i]) * B(Y[antinu][i]);
 
-	     if(lasttime==false){ Sm[antinu][i] = Sa[antinu][i] * Scumulative[antinu][i];}
+	     if(firsttime==false && lasttime==false){ Sm[antinu][i] = Sa[antinu][i] * Scumulative[antinu][i];}
 	     else{ Sm[antinu][i] = Adjoint(UV[antinu])*UU[antinu][i] * Sa[antinu][i] * Scumulative[antinu][i];}
 	     
              Smf[antinu][i]= Sm[antinu][i] * Adjoint(UV[antinu]);
-	     Sfm[antinu][i] = UU[antinu][i] * Sm[antinu][i];
-	     Sf[antinu][i] = UU[antinu][i] * Smf[antinu][i];
+             
+	     if(lasttime==false)
+	       { Sfm[antinu][i] = UU[antinu][i] * Sm[antinu][i];
+            	 Sf[antinu][i] = UU[antinu][i] * Smf[antinu][i];
+            	}
+             else{ Sfm[antinu][i] = UV[antinu] * Sm[antinu][i];
+            	   Sf[antinu][i] = UV[antinu] * Smf[antinu][i];
+            	  }	 
 	    }
 
 	for(i=0;i<=NE-1;i++)
@@ -114,7 +125,9 @@ void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double l
                 fPvslambda<<"\t Pbaree \t Pbaremu \t Pbaretau \t Pbarmue \t Pbarmumu \t Pbarmutau \t Pbartaue \t Pbartaumu \t Pbartautau";
                }             
 
-             fPvslambda<<"\n"<<lambda<<"\t"<<r;
+             if(firsttime==true){ fPvslambda<<"\n"<<lambdamin0<<"\t"<<r;}
+             if(lasttime==true){ fPvslambda<<"\n"<<lambdamax0<<"\t"<<r;}
+             if(firsttime==false && lasttime==false){ fPvslambda<<"\n"<<lambda<<"\t"<<r;}
 
 	     fPvslambda<<"\t"<<norm(Sm[nu][i][0][0])<<"\t"<<norm(Sm[nu][i][0][1])<<"\t"<<norm(Sm[nu][i][0][2]);
 	     fPvslambda<<"\t"<<norm(Sm[nu][i][1][0])<<"\t"<<norm(Sm[nu][i][1][1])<<"\t"<<norm(Sm[nu][i][1][2]);
@@ -151,7 +164,8 @@ void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double 
       { string cmdotdat("cm.dat");
         stringstream filename;
 
-        filename.str(""); filename<<outputfilenamestem<<string(":PvsE:lambda=")<<lambda<<cmdotdat; fPvsE.open((filename.str()).c_str()); fPvsE.precision(12);
+        if(lasttime==false){ filename.str(""); filename<<outputfilenamestem<<string(":PvsE:lambda=")<<lambda<<cmdotdat; fPvsE.open((filename.str()).c_str()); fPvsE.precision(12);}
+        else{ filename.str(""); filename<<outputfilenamestem<<string(":PvsE:lambda=")<<lambdamax0<<cmdotdat; fPvsE.open((filename.str()).c_str()); fPvsE.precision(12);}        
 
         double r, rrho, YYe;
 
@@ -189,8 +203,14 @@ void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double 
 	     else{ Sm[nu][i] = Adjoint(UV[nu])*UU[nu][i] * Sa[nu][i] * Scumulative[nu][i];}
              
              Smf[nu][i]= Sm[nu][i] * Adjoint(UV[nu]);
-	     Sfm[nu][i] = UU[nu][i] * Sm[nu][i];
-	     Sf[nu][i] = UU[nu][i] * Smf[nu][i];
+             
+	     if(lasttime==false){ 
+	        Sfm[nu][i] = UU[nu][i] * Sm[nu][i];
+	        Sf[nu][i] = UU[nu][i] * Smf[nu][i];
+	       } 
+             else{ Sfm[nu][i] = UV[nu] * Sm[nu][i];
+	           Sf[nu][i] = UV[nu] * Smf[nu][i];
+	          }
 
 	     // *********
 	     
@@ -205,8 +225,14 @@ void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double 
 	     else{ Sm[antinu][i] = Adjoint(UV[antinu])*UU[antinu][i] * Sa[antinu][i] * Scumulative[antinu][i];}
 	     	     
              Smf[antinu][i]= Sm[antinu][i] * Adjoint(UV[antinu]);
-	     Sfm[antinu][i] = UU[antinu][i] * Sm[antinu][i];
-	     Sf[antinu][i] = UU[antinu][i] * Smf[antinu][i];
+             
+	     if(lasttime==false)
+	       { Sfm[antinu][i] = UU[antinu][i] * Sm[antinu][i];
+            	 Sf[antinu][i] = UU[antinu][i] * Smf[antinu][i];
+            	}
+             else{ Sfm[antinu][i] = UV[antinu] * Sm[antinu][i];
+            	   Sf[antinu][i] = UV[antinu] * Smf[antinu][i];
+            	  }
 	    }
 
         // *******
@@ -258,75 +284,40 @@ void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double 
 
 // ************************************************************************
 
-void Output_Hvslambda(bool firsttime,ofstream &fHvslambda,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative)
+void Output_Hvslambda(bool firsttime,bool lasttime,ofstream &fHvslambda,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative)
           { MATRIX<complex<double>,NF,NF> VfMSW,VfMSWbar;
-            MATRIX<complex<double>,NF,NF> Hf,Hfbar;
-
-            vector<MATRIX<complex<double>,NF,NF> > UU(NE), UUbar(NE);
-
-            array<double,NF> kk,kkbar; 
-            array<double,(NF*(NF-1))/2>  dkk,dkkbar;
-
-            vector<MATRIX<complex<double>,NF,NF> > BB(NE), BBbar(NE);
-            vector<MATRIX<complex<double>,NF,NF> > WW(NE), WWbar(NE);
-
-            vector<MATRIX<complex<double>,NF,NF> > Sm(NE),Smbar(NE), Smf(NE),Smfbar(NE), Sf(NE),Sfbar(NE);
-
             double r, rrho, YYe;
 
             // *************
 
             r = sqrt( RE*RE + lambda*lambda - 2.*RE*lambda*sin(-altitude) );
-            rrho=rho(r);
-            YYe=Ye(r); 
+            rrho=YYe=0.; 
 
             // ****************
 
-            VfMSW[e][e]=Ve(rrho,YYe); 
-            VfMSW[mu][mu]=Vmu(rrho,YYe);
-            VfMSW[tau][tau]=Vtau(rrho,YYe);
+            if(firsttime==false && lasttime==false)
+              { rrho=rho(r);
+                YYe=Ye(r); 
+            
+                VfMSW[e][e]=Ve(rrho,YYe); 
+                VfMSW[mu][mu]=Vmu(rrho,YYe);
+                VfMSW[tau][tau]=Vtau(rrho,YYe);
+                
+                VfMSWbar=-Conjugate(VfMSW);                
+               } 
 
-            VfMSWbar=-Conjugate(VfMSW);
-
-            int i;
-            #pragma omp parallel for schedule(static) private(Hf,Hfbar,kk,kkbar,dkk,dkkbar) 
-            for(i=0;i<=NE-1;i++)
-               { Hf=HfV[nu][i]+VfMSW;     
-                 kk=k(Hf);
-                 dkk=deltak(kk);
-	         UU[i]=MixingMatrix(Hf,kk,dkk);
-
-                 BB[i]=B(Y[nu][i]);
-                 WW[i]=W(Y[nu][i]);
-
-                 Sm[i]=WW[i]*BB[i] *Scumulative[nu][i];
-                 Smf[i]=Sm[i]*Adjoint(UV[nu]);
-                 Sf[i]=UU[i]*Sm[i]*Adjoint(UV[nu]);
-
-                 // ***********
-
-                 Hfbar=HfV[antinu][i]+VfMSWbar;
-	         kkbar=kbar(Hfbar);
-                 dkkbar=deltakbar(kkbar);
-	     	 UUbar[i]=MixingMatrix(Hfbar,kkbar,dkkbar);
-
-                 BBbar[i]=B(Y[antinu][i]);
-                 WWbar[i]=W(Y[antinu][i]);
-
-                 Smbar[i]=WWbar[i]*BBbar[i] *Scumulative[antinu][i];
-                 Smfbar[i]=Smbar[i]*Adjoint(UV[antinu]);
-                 Sfbar[i]=UUbar[i]*Smbar[i]*Adjoint(UV[antinu]);
-	        }
-
-         // **************
+            // **************
          
-         if(firsttime==true){
-            fHvslambda<<"lambda [cm] \t r [cm] \t rho [g/cm^3] \t Ye [] \t HMSW_ee [erg]";
-           }         
+            if(firsttime==true){
+               fHvslambda<<"lambda [cm] \t r [cm] \t rho [g/cm^3] \t Ye [] \t HMSW_ee [erg]";
+              }         
 
-         fHvslambda<<"\n"<<lambda<<"\t"<<r<<"\t"<<rrho<<"\t"<<YYe;
-         fHvslambda<<"\t"<<real(VfMSW[e][e]);
+            if(firsttime==true){ fHvslambda<<"\n"<<lambdamin0;}
+            if(lasttime==true){ fHvslambda<<"\n"<<lambdamax0;}            
+            if(firsttime==false && lasttime==false){ fHvslambda<<"\n"<<lambda;}            
+            
+            fHvslambda<<"\t"<<r<<"\t"<<rrho<<"\t"<<YYe<<"\t"<<real(VfMSW[e][e]);
 
-         fHvslambda.flush();
-      }
+            fHvslambda.flush();
+           }
 

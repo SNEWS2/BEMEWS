@@ -52,8 +52,7 @@ extern std::array<MATRIX<std::complex<double>,NF,NF>,NM> UV;
 // *******************************************************
 
 // miniumum and maximum radius for calculation
-extern double lambdamin, lambdamax;
-extern double rmin, rmax;
+extern double lambdamin,lambdamin0, lambdamax,lambdamax0;
 extern double RE;
 extern double altitude, azimuth;
 
