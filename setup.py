@@ -17,20 +17,6 @@ import pybind11
 setup_keywords = dict()
 #
 
-#
-# Set other keywords for the setup function.
-#
-# Use entry_points to let `pip` create executable scripts for each target platform.
-# See https://setuptools.readthedocs.io/en/latest/userguide/entry_point.html
-# setup_keywords['entry_points'] = {'console_scripts': ['to_snowglobes = snewpy.to_snowglobes:generate_time_series', ], },
-setup_keywords['provides'] = [setup_keywords['name']]
-setup_keywords['zip_safe'] = False
-#setup_keywords['test_suite']='snewpy.test.snewpy_test_suite.snewpy_test_suite'
-
-setup_keywords['extras_require'] = {  # Optional
-    'dev': ['pytest'],
-    'docs':['numpydoc']
-}
 
 LIBOMP_INCLUDE = os.environ['LIBOMP_INCLUDE']
 PYBIND11_INCLUDE = os.path.join(pybind11.__path__[0], "include")
