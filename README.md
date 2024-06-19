@@ -26,11 +26,11 @@ sudo python3 setup.py install
 
 TROUBLESHOOTING:
 
-1) When running EMEWS.py you may have to set the PYTHONPATH environment variable to your PWD
+1) When using EMEWS you may have to set the PYTHONPATH environment variable to your PWD
    and/or wherever the EMEWS module was installed in steps 3) or step 4)
 
-2) If the script still cannot find the module you may need to put the *.so library in the same directory
-   as the EMEWS.py file. The *.so library is in one of the subfolders in the build directory. 
+2) If your script still cannot find the module you may need to put the *.so library in the same directory
+   as the file. The *.so library is in one of the subfolders in the build directory. 
 
 3) EMEWS uses OpenMP. You may want to set the OMP_NUM_THREADS environment variable to a number suitable for your machine.
 
