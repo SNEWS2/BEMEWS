@@ -16,21 +16,7 @@ import pybind11
 #
 setup_keywords = dict()
 #
-setup_keywords['name'] = 'EMEWS'
-setup_keywords['description'] = 'A Python module for computing the Earth-matter effect upon neutrinos. Works alone or with snewpy.'
-setup_keywords['author'] = 'Jim Kneller and Anne Graf'
-setup_keywords['author_email'] = 'jpknelle@ncsu.edu'
-setup_keywords['license'] = 'BSD'
-setup_keywords['url'] = 'https://github.com/SNEWS2/snewpy'
-setup_keywords['version'] = '1.0'
-#
-# Use README.md as a long_description.
-#
-setup_keywords['long_description'] = ''
-if os.path.exists('README.md'):
-    with open('README.md') as readme:
-        setup_keywords['long_description'] = readme.read()
-    setup_keywords['long_description_content_type'] = 'text/markdown'
+
 #
 # Set other keywords for the setup function.
 #
@@ -38,16 +24,9 @@ if os.path.exists('README.md'):
 # See https://setuptools.readthedocs.io/en/latest/userguide/entry_point.html
 # setup_keywords['entry_points'] = {'console_scripts': ['to_snowglobes = snewpy.to_snowglobes:generate_time_series', ], },
 setup_keywords['provides'] = [setup_keywords['name']]
-setup_keywords['python_requires'] = '>=3.9'
 setup_keywords['zip_safe'] = False
 #setup_keywords['test_suite']='snewpy.test.snewpy_test_suite.snewpy_test_suite'
 
-requires = []
-with open('requirements.txt', 'r') as f:
-    for line in f:
-        if line.strip():
-            requires.append(line.strip())
-setup_keywords['install_requires'] = requires
 setup_keywords['extras_require'] = {  # Optional
     'dev': ['pytest'],
     'docs':['numpydoc']
