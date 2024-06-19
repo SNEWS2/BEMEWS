@@ -1,0 +1,54 @@
+name: Build EMEWS
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the main branch
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest] # [macos-latest, ubuntu-latest, windows-latest]
+        python-version: ['3.12'] # ['3.9', '3.10', '3.11', '3.12']
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies (all OSes)
+        run: |
+          python -m pip install --upgrade pip
+          pip install setuptools wheel pybind11
+      - name: Install dependencies (macOS)
+        if: ${{ startsWith(matrix.os, 'macos') }}
+        run: |
+          brew install libomp
+          echo "LIBOMP_INCLUDE=`brew --prefix`/opt/libomp/include" >> $GITHUB_ENV
+      - name: Install dependencies (Ubuntu)
+        if: ${{ startsWith(matrix.os, 'ubuntu') }}
+        run: |
+          exit 1 # TODO: Add Ubuntu dependencies here
+      - name: Install dependencies (Windows)
+        if: ${{ startsWith(matrix.os, 'windows') }}
+        run: |
+          exit 1 # TODO: Add Windows dependencies here
+
+      - name: Install EMEWS
+        run: |
+          python setup.py sdist bdist_wheel
+          ls -al dist/
+          pip install dist/*.whl
+      - name: Run example script
+        run: |
+          python EMEWS_example.py
