@@ -23,3 +23,12 @@ dependencies = [
 
 [project.urls]
 "Homepage" = "https://github.com/SNEWS2/EMEWS"
+
+
+[tool.setuptools]
+# The sdist should include all files in the repo (notably *.cpp and *.h),
+# which is done by setuptools_scm.
+# For wheels, this “package data” (everything except for *.py and compiled),
+# is mostly unnecessary, so we exclude it and only add PREM data files.
+include-package-data = false
+package-data = { "EMEWS.data" = ["*.dat"] }
