@@ -2,6 +2,7 @@
 
 if __name__ == "__main__":
 
+    from importlib.resources import files
     import numpy as np
     from astropy import units as u
     from astropy.time import Time
@@ -23,6 +24,7 @@ if __name__ == "__main__":
 
     # load the mdule that does the Earth-matter effect calculation 
     import EMEWS
+    import EMEWS.data
 
     # class to accumulate input data for calcultion
     ID = EMEWS.InputDataEMEWS()
@@ -33,8 +35,8 @@ if __name__ == "__main__":
 
     ID.outputfilenamestem = "out/EMEWS:PREM"
 
-    ID.densityprofile = "PREM.rho.dat"
-    ID.electronfraction = "PREM.Ye.dat"
+    ID.densityprofile = str(files(EMEWS.data).joinpath("PREM.rho.dat"))
+    ID.electronfraction = str(files(EMEWS.data).joinpath("PREM.Ye.dat"))
 
     ID.NE = 296
     ID.Emin = 1	
