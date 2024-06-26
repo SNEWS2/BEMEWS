@@ -48,6 +48,7 @@ void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double l
       { array<MATRIX<complex<double>,NF,NF>,NM> VfMSW, dVfMSWdlambda;
 
         double r = sqrt( RE*RE + lambda*lambda - 2.*RE*lambda*sin(-altitude) );
+	if(r > RE){ r = RE;}       
         double rrho=rho(r);
         double YYe=Ye(r);
 
@@ -172,6 +173,7 @@ void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double 
         // ******
 
         r = sqrt( RE*RE + lambda*lambda - 2.*RE*lambda*sin(-altitude) );
+	if(r > RE){ r = RE;}              
         rrho=rho(r);
         YYe=Ye(r); 
 
@@ -291,6 +293,7 @@ void Output_Hvslambda(bool firsttime,bool lasttime,ofstream &fHvslambda,double l
             // *************
 
             r = sqrt( RE*RE + lambda*lambda - 2.*RE*lambda*sin(-altitude) );
+	    if(r > RE){ r = RE;}       	   
             rrho=YYe=0.; 
 
             // ****************
