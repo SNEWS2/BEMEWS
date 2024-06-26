@@ -22,7 +22,8 @@ vector<vector<MATRIX<complex<double>,NF,NF> > > UpdateSm(double lambdaminus,doub
             int i;            
 
             // multiply by the mixing matrix at rminus
-            r=sqrt(RE*RE+lambdaminus*lambdaminus-2.*RE*lambdaminus*sin(-altitude));
+            r = sqrt(RE*RE+lambdaminus*lambdaminus-2.*RE*lambdaminus*sin(-altitude));
+	    if(r > RE){ r = RE;}       	   
             rrho = rho(r);
             YYe = Ye(r); 
     
@@ -48,7 +49,8 @@ vector<vector<MATRIX<complex<double>,NF,NF> > > UpdateSm(double lambdaminus,doub
 		}
 
             // multiply by the adjoint of the mixing matrix at rplus
-            r=sqrt(RE*RE+lambdaplus*lambdaplus-2.*RE*lambdaplus*sin(-altitude));
+            r = sqrt(RE*RE+lambdaplus*lambdaplus-2.*RE*lambdaplus*sin(-altitude));
+	    if(r > RE){ r = RE;}       	   
             rrho = rho(r);
             YYe = Ye(r); 
     
