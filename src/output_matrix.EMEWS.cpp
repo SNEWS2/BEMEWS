@@ -15,7 +15,8 @@ void Pfm(double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRI
 
         // ******
 
-        r=sqrt(RE*RE+lambda*lambda+2.*RE*lambda*sin(altitude));
+        r = sqrt(RE*RE+lambda*lambda+2.*RE*lambda*sin(altitude));
+	if(r > RE){ r = RE;}              
         rrho=rho(r);
         YYe=Ye(r); 
 
