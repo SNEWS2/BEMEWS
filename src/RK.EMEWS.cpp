@@ -63,6 +63,7 @@ void K(double lambda,double dlambda,vector<vector<array<double,NY> > > &Y,vector
             // *************
 
             r = sqrt( RE*RE + lambda*lambda - 2.*RE*lambda*sin(-altitude) );
+	    i(r > RE){ r = RE;}
             drdlambda = (lambda - RE*sin(-altitude))/r;
 
             rrho=rho(r);
