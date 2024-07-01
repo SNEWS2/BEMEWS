@@ -1,4 +1,4 @@
-![image](https://github.com/SNEWS2/EMEWS/assets/44247426/e73b1dbc-67b4-4b9f-998f-ee55c9fdb151)
+![image](https://github.com/SNEWS2/BEMEWS/assets/44247426/22dc06cb-e3b9-49d8-90ce-807a3308930f)
 Image by dreamstudio.ai
 
 
