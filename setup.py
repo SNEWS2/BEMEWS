@@ -18,13 +18,13 @@ if os.name == 'posix':  # macOS or Linux
 elif os.name == 'nt':  # Windows
     LIBDIR = sysconfig.get_config_var('LIBDEST')
 
-EMEWS = Extension('EMEWS._ext',
-                  define_macros = [('MAJOR_VERSION', '1'), ('MINOR_VERSION', '0')],
-                  include_dirs = [LIBOMP_INCLUDE, PYBIND11_INCLUDE, './src/EMEWS/_ext', './src/EMEWS/_ext/mstl', './src/EMEWS/_ext/mstl/math2', './src/EMEWS/_ext/mstl/math2/algebra', './src/EMEWS/_ext/mstl/math2/analysis', './src/EMEWS/_ext/mstl/math2/spline', './src/EMEWS/_ext/mstl/physics'],
-                  # libraries = ['stdc++', 'm', 'gomp', 'python3'],
-                  library_dirs = [LIBDIR],
-                  extra_compile_args = ['-std=c++17', '-fPIC', '-nostartfiles'],
-                  # extra_link_args = ['-shared'],
-                  sources = ['./src/EMEWS/_ext/EMEWS.cpp', './src/EMEWS/_ext/adiabatic_basis.cpp', './src/EMEWS/_ext/eigenvalues.cpp', './src/EMEWS/_ext/flavour_basis.cpp', './src/EMEWS/_ext/input_class.EMEWS.cpp', './src/EMEWS/_ext/jacobians.cpp', './src/EMEWS/_ext/mixing_angles.cpp', './src/EMEWS/_ext/output.EMEWS.cpp', './src/EMEWS/_ext/output_matrix.EMEWS.cpp', './src/EMEWS/_ext/parameters.cpp', './src/EMEWS/_ext/potentials.cpp', './src/EMEWS/_ext/RK.EMEWS.cpp', './src/EMEWS/_ext/update.EMEWS.cpp', './src/EMEWS/_ext/mstl/errors2.cpp', './src/EMEWS/_ext/mstl/messages.cpp', './src/EMEWS/_ext/mstl/miscellaneous functions.cpp', './src/EMEWS/_ext/mstl/stdarg2.cpp', './src/EMEWS/_ext/mstl/math2/algebra/column and row vectors.cpp', './src/EMEWS/_ext/mstl/math2/algebra/linear algebra.cpp', './src/EMEWS/_ext/mstl/math2/algebra/mmatrix.cpp', './src/EMEWS/_ext/mstl/math2/analysis/algorithm3.cpp', './src/EMEWS/_ext/mstl/math2/analysis/complex2.cpp', './src/EMEWS/_ext/mstl/math2/analysis/derivative.cpp', './src/EMEWS/_ext/mstl/math2/analysis/polynomial.cpp', './src/EMEWS/_ext/mstl/math2/analysis/roots.cpp', './src/EMEWS/_ext/mstl/math2/analysis/runge kutta.cpp', './src/EMEWS/_ext/mstl/math2/analysis/special functions.cpp', './src/EMEWS/_ext/mstl/math2/spline/discontinuous.cpp', './src/EMEWS/_ext/mstl/math2/spline/interpolation data.cpp', './src/EMEWS/_ext/mstl/physics/units and constants.cpp'])
+BEMEWS = Extension('BEMEWS._ext',
+                   define_macros = [('MAJOR_VERSION', '1'), ('MINOR_VERSION', '0')],
+                   include_dirs = [LIBOMP_INCLUDE, PYBIND11_INCLUDE, './src/BEMEWS/_ext', './src/BEMEWS/_ext/mstl', './src/BEMEWS/_ext/mstl/math2', './src/BEMEWS/_ext/mstl/math2/algebra', './src/BEMEWS/_ext/mstl/math2/analysis', './src/BEMEWS/_ext/mstl/math2/spline', './src/BEMEWS/_ext/mstl/physics'],
+                   # libraries = ['stdc++', 'm', 'gomp', 'python3'],
+                   library_dirs = [LIBDIR],
+                   extra_compile_args = ['-std=c++17', '-fPIC', '-nostartfiles'],
+                   # extra_link_args = ['-shared'],
+                   sources = ['./src/BEMEWS/_ext/BEMEWS.cpp', './src/BEMEWS/_ext/adiabatic_basis.cpp', './src/BEMEWS/_ext/eigenvalues.cpp', './src/BEMEWS/_ext/flavour_basis.cpp', './src/BEMEWS/_ext/input_class.BEMEWS.cpp', './src/BEMEWS/_ext/jacobians.cpp', './src/BEMEWS/_ext/mixing_angles.cpp', './src/BEMEWS/_ext/output.BEMEWS.cpp', './src/BEMEWS/_ext/output_matrix.BEMEWS.cpp', './src/BEMEWS/_ext/parameters.cpp', './src/BEMEWS/_ext/potentials.cpp', './src/BEMEWS/_ext/RK.BEMEWS.cpp', './src/BEMEWS/_ext/update.BEMEWS.cpp', './src/BEMEWS/_ext/mstl/errors2.cpp', './src/EMEWS/_ext/mstl/messages.cpp', './src/BEMEWS/_ext/mstl/miscellaneous functions.cpp', './src/BEMEWS/_ext/mstl/stdarg2.cpp', './src/BEMEWS/_ext/mstl/math2/algebra/column and row vectors.cpp', './src/BEMEWS/_ext/mstl/math2/algebra/linear algebra.cpp', './src/BEMEWS/_ext/mstl/math2/algebra/mmatrix.cpp', './src/BEMEWS/_ext/mstl/math2/analysis/algorithm3.cpp', './src/BEMEWS/_ext/mstl/math2/analysis/complex2.cpp', './src/BEMEWS/_ext/mstl/math2/analysis/derivative.cpp', './src/BEMEWS/_ext/mstl/math2/analysis/polynomial.cpp', './src/BEMEWS/_ext/mstl/math2/analysis/roots.cpp', './src/BEMEWS/_ext/mstl/math2/analysis/runge kutta.cpp', './src/BEMEWS/_ext/mstl/math2/analysis/special functions.cpp', './src/BEMEWS/_ext/mstl/math2/spline/discontinuous.cpp', './src/BEMEWS/_ext/mstl/math2/spline/interpolation data.cpp', './src/BEMEWS/_ext/mstl/physics/units and constants.cpp'])
 
-setup(ext_modules=[EMEWS])
+setup(ext_modules=[BEMEWS])
