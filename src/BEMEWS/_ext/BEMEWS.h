@@ -1,6 +1,6 @@
 
-#ifndef EMEWS_H
-#define EMEWS_H
+#ifndef BEMEWS_H
+#define BEMEWS_H
 
 // *****************************************************************
 
@@ -93,7 +93,7 @@
 
 // ********************************************************************** 
 
-std::vector<std::vector<std::vector<std::vector<double> > > > Run(InputDataEMEWS ID);
+std::vector<std::vector<std::vector<std::vector<double> > > > Run(InputDataBEMEWS ID);
 
 // ************************ Neutrino Potentials **************************
 
