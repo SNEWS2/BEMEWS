@@ -3,7 +3,7 @@ requires = ["setuptools>=69.0", "setuptools_scm>=8", "pybind11"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "EMEWS"
+name = "BEMEWS"
 description = "A Python module for computing the Earth-matter effect upon neutrinos. Works alone or with snewpy."
 license = {text = "BSD License"}
 readme = "README.md"
@@ -22,7 +22,7 @@ dependencies = [
 
 
 [project.urls]
-"Homepage" = "https://github.com/SNEWS2/EMEWS"
+"Homepage" = "https://github.com/SNEWS2/BEMEWS"
 
 
 [tool.setuptools]
@@ -31,4 +31,4 @@ dependencies = [
 # For wheels, this “package data” (everything except for *.py and compiled),
 # is mostly unnecessary, so we exclude it and only add PREM data files.
 include-package-data = false
-package-data = { "EMEWS.data" = ["*.dat"] }
+package-data = { "BEMEWS.data" = ["*.dat"] }
