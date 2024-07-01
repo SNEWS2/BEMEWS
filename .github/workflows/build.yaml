@@ -1,4 +1,4 @@
-name: Build EMEWS
+name: Build BEMEWS
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the main branch
@@ -44,11 +44,11 @@ jobs:
         run: |
           exit 1 # TODO: Add Windows dependencies here
 
-      - name: Install EMEWS
+      - name: Install BEMEWS
         run: |
           python -m build
           ls -al dist/
           pip install dist/*.whl
       - name: Run example script
         run: |
-          python EMEWS_example.py
+          python BEMEWS_example.py
