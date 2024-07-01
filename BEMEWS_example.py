@@ -23,11 +23,11 @@ if __name__ == "__main__":
     SNaltaz = Betelgeuse.transform_to(AltAz(obstime=time,location=SuperK)) 
 
     # load the mdule that does the Earth-matter effect calculation 
-    import EMEWS
-    import EMEWS.data
+    import BEMEWS
+    import BEMEWS.data
 
     # class to accumulate input data for calcultion
-    ID = EMEWS.InputDataEMEWS()
+    ID = BEMEWS.InputDataEMEWS()
 
     # assign data fields
     ID.altitude = SNaltaz.alt.deg
@@ -35,8 +35,8 @@ if __name__ == "__main__":
 
     ID.outputfilenamestem = "out/EMEWS:PREM"
 
-    ID.densityprofile = str(files(EMEWS.data).joinpath("PREM.rho.dat"))
-    ID.electronfraction = str(files(EMEWS.data).joinpath("PREM.Ye.dat"))
+    ID.densityprofile = str(files(BEMEWS.data).joinpath("PREM.rho.dat"))
+    ID.electronfraction = str(files(BEMEWS.data).joinpath("PREM.Ye.dat"))
 
     ID.NE = 296
     ID.Emin = 1	
@@ -51,7 +51,7 @@ if __name__ == "__main__":
 
     ID.accuracy = 1.01E-009
 
-    # if set to True the EMEWS module will output files in the 'out' directory
+    # if set to True the BEMEWS module will output files in the 'out' directory
     # The stepcounterlimit controls how often output is written. The larger the number, the less often it happens. 
     ID.outputflag = False 
     ID.stepcounterlimit = 1
@@ -60,7 +60,7 @@ if __name__ == "__main__":
 
     # do the calculation. The return is a four dimensional array of transition probabilities nu_alpha -> nu_i: 
     # index order is matter/antimatter, energy, i, alpha
-    Pfm = EMEWS.Run(ID)
+    Pfm = BEMEWS.Run(ID)
 
     print("finished")
 
