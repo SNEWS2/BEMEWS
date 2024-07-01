@@ -1,5 +1,5 @@
 
-#include "EMEWS.h"
+#include "BEMEWS.h"
 
 #ifndef potentials_H
 #define potentials_H
