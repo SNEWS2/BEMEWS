@@ -21,7 +21,7 @@ using interpolation::DISCONTINUOUS;
 // **********************************************************
 // **********************************************************
 
-void Profile_loader(InputDataEMEWS ID,string &outputfilenamestem)
+void Profile_loader(InputDataBEMEWS ID,string &outputfilenamestem)
      { string rhofilename, Yefilename, vfilename, Mfilename;
        
        rhofilename = ID.densityprofile;
@@ -70,7 +70,7 @@ void Profile_loader(InputDataEMEWS ID,string &outputfilenamestem)
 // **********************************************************
 // **********************************************************
 
-void Neutrino_loader(InputDataEMEWS ID,std::string &outputfilenamestem)
+void Neutrino_loader(InputDataBEMEWS ID,std::string &outputfilenamestem)
      { NE = ID.NE;
        EminMeV = ID.Emin;
        EmaxMeV = ID.Emax; // in MeV
