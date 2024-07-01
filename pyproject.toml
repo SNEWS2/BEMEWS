@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=69.0", "setuptools_scm>=8", "pybind11"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "EMEWS"
+description = "A Python module for computing the Earth-matter effect upon neutrinos. Works alone or with snewpy."
+license = {text = "BSD License"}
+readme = "README.md"
+authors = [
+    {name="Jim Kneller", email="jpknelle@ncsu.edu"},
+    {name="Anne Graf"},
+]
+
+version = "1.0"
+requires-python = ">=3.9"  # TODO: Also update classifiers below!
+dependencies = [
+    "numpy >= 1.16",
+    "scipy",
+    "astropy >= 4.3"
+]
+
+
+[project.urls]
+"Homepage" = "https://github.com/SNEWS2/EMEWS"
