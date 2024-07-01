@@ -1,5 +1,5 @@
 
-#include "EMEWS.h"
+#include "BEMEWS.h"
 
 // *************************************************************************
 
@@ -74,25 +74,25 @@ interpolation::DISCONTINUOUS rho, Ye;
 // ********************************************************************** 
 
 PYBIND11_MODULE(_ext, m)
-{   class_<InputDataEMEWS>(m, "InputDataEMEWS")
+{   class_<InputDataEMEWS>(m, "InputDataBEMEWS")
         .def(init<>())
-        .def_readwrite("altitude", &InputDataEMEWS::altitude)
-        .def_readwrite("azimuth", &InputDataEMEWS::azimuth)
-        .def_readwrite("outputfilenamestem", &InputDataEMEWS::outputfilenamestem)
-        .def_readwrite("densityprofile", &InputDataEMEWS::densityprofile)
-        .def_readwrite("electronfraction", &InputDataEMEWS::electronfraction)
-        .def_readwrite("Emin", &InputDataEMEWS::Emin)
-        .def_readwrite("Emax", &InputDataEMEWS::Emax)
-        .def_readwrite("deltam_21", &InputDataEMEWS::deltam_21)
-        .def_readwrite("deltam_32", &InputDataEMEWS::deltam_32)
-        .def_readwrite("theta12", &InputDataEMEWS::theta12)
-        .def_readwrite("theta13", &InputDataEMEWS::theta13)
-        .def_readwrite("theta23", &InputDataEMEWS::theta23)
-        .def_readwrite("deltaCP", &InputDataEMEWS::deltaCP)
-        .def_readwrite("accuracy", &InputDataEMEWS::accuracy)
-        .def_readwrite("stepcounterlimit", &InputDataEMEWS::stepcounterlimit)
-        .def_readwrite("NE", &InputDataEMEWS::NE)
-        .def_readwrite("outputflag", &InputDataEMEWS::outputflag)
+        .def_readwrite("altitude", &InputDataBEMEWS::altitude)
+        .def_readwrite("azimuth", &InputDataBEMEWS::azimuth)
+        .def_readwrite("outputfilenamestem", &InputDataBEMEWS::outputfilenamestem)
+        .def_readwrite("densityprofile", &InputDataBEMEWS::densityprofile)
+        .def_readwrite("electronfraction", &InputDataBEMEWS::electronfraction)
+        .def_readwrite("Emin", &InputDataBEMEWS::Emin)
+        .def_readwrite("Emax", &InputDataBEMEWS::Emax)
+        .def_readwrite("deltam_21", &InputDataBEMEWS::deltam_21)
+        .def_readwrite("deltam_32", &InputDataBEMEWS::deltam_32)
+        .def_readwrite("theta12", &InputDataBEMEWS::theta12)
+        .def_readwrite("theta13", &InputDataBEMEWS::theta13)
+        .def_readwrite("theta23", &InputDataBEMEWS::theta23)
+        .def_readwrite("deltaCP", &InputDataBEMEWS::deltaCP)
+        .def_readwrite("accuracy", &InputDataBEMEWS::accuracy)
+        .def_readwrite("stepcounterlimit", &InputDataBEMEWS::stepcounterlimit)
+        .def_readwrite("NE", &InputDataBEMEWS::NE)
+        .def_readwrite("outputflag", &InputDataBEMEWS::outputflag)
         ;
 
     /*class_<vector<vector<vector<vector<double> > > > >("stl_vectorx4")
@@ -110,7 +110,7 @@ PYBIND11_MODULE(_ext, m)
 
 // ********************************* MAIN ****************
 
-vector<vector<vector<vector<double> > > > Run(InputDataEMEWS ID)
+vector<vector<vector<vector<double> > > > Run(InputDataBEMEWS ID)
     { vector<vector<vector<vector<double> > > > PPfm;
 
       try{ string outputfilenamestem; 
