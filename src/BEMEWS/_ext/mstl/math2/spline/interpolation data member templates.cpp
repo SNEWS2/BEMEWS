@@ -117,7 +117,7 @@ double YDATA_SINGLESET<ND>::Y(std::vector<int> i) const
          #endif       
          std::vector<size_t> D=NY(); 
          #if !defined(DNDEBUG)         
-         for(int a=0;a<=static_cast<int>(ND)-1;a++){ if(i[a]<1 || i[a]>D[a]){ throw OUT_OF_RANGE<int>(i[a],1,D[a],std::string("Y"),CLASS_NAME);} }
+         for(int a=0;a<=static_cast<int>(ND)-1;a++){ if(i[a]<1 || i[a]>static_cast<int>(D[a])){ throw OUT_OF_RANGE<int>(i[a],1,D[a],std::string("Y"),CLASS_NAME);} }
          #endif
          return _pY(i);         
         }
@@ -130,7 +130,7 @@ void YDATA_SINGLESET<ND>::SetY(std::vector<int> i,double Y) const
          #endif
          std::vector<size_t> D=NY(); 
          #if !defined(DNDEBUG)         
-         for(int a=0;a<=static_cast<int>(ND)-1;a++){ if(i[a]<1 || i[a]>D[a]){ throw OUT_OF_RANGE<int>(i[a],1,D[a],std::string("SetY"),CLASS_NAME);} }
+         for(int a=0;a<=static_cast<int>(ND)-1;a++){ if(i[a]<1 || i[a]>static_cast<int>(D[a])){ throw OUT_OF_RANGE<int>(i[a],1,D[a],std::string("SetY"),CLASS_NAME);} }
          #endif
          _pSetY(i,Y);
         }
@@ -303,7 +303,7 @@ double SPLINE_MULTIPLEXSETS_SINGLEYSET<ND>::A(std::vector<int> i,std::vector<int
          #endif
          std::vector<size_t> D=NA(); 
          #if !defined(DNDEBUG)          
-         for(int a=0;a<=static_cast<int>(ND)-1;a++){ if(i[a]<1 || i[a]>D[a]){ throw OUT_OF_RANGE<int>(i[a],1,D[a],std::string("A"),CLASS_NAME);} }
+         for(int a=0;a<=static_cast<int>(ND)-1;a++){ if(i[a]<1 || i[a]>static_cast<int>(D[a])){ throw OUT_OF_RANGE<int>(i[a],1,D[a],std::string("A"),CLASS_NAME);} }
          #endif
          return _pA(i,j);
         }
@@ -316,7 +316,7 @@ TARRAY<double,ND> SPLINE_MULTIPLEXSETS_SINGLEYSET<ND>::A(std::vector<int> i) con
          #endif
          std::vector<size_t> D=NA(); 
          #if !defined(DNDEBUG)
-         for(int a=0;a<=static_cast<int>(ND)-1;a++){ if(i[a]<1 || i[a]>D[a]){ throw OUT_OF_RANGE<int>(i[a],1,D[a],std::string("A"),CLASS_NAME);} }
+         for(int a=0;a<=static_cast<int>(ND)-1;a++){ if(i[a]<1 || i[a]>static_cast<int>(D[a])){ throw OUT_OF_RANGE<int>(i[a],1,D[a],std::string("A"),CLASS_NAME);} }
          #endif 
          return _pA(i);
         }
@@ -329,7 +329,7 @@ void SPLINE_MULTIPLEXSETS_SINGLEYSET<ND>::SetA(std::vector<int> i,std::vector<in
          if(static_cast<int>(j.size())!=ND){ throw NOT_EQUAL_VALUES<int>(static_cast<int>(j.size()),ND,std::string("SetA"),CLASS_NAME);}
          #endif
          std::vector<size_t> D=NA(); 
-         for(int a=0;a<=static_cast<int>(ND)-1;a++){ if(i[a]<1 || i[a]>D[a]){ throw OUT_OF_RANGE<int>(i[a],1,D[a],std::string("SetA"),CLASS_NAME);} }
+         for(int a=0;a<=static_cast<int>(ND)-1;a++){ if(i[a]<1 || i[a]>static_cast<int>(D[a])){ throw OUT_OF_RANGE<int>(i[a],1,D[a],std::string("SetA"),CLASS_NAME);} }
          _pSetA(i,j,A);
         }
 
@@ -341,7 +341,7 @@ void SPLINE_MULTIPLEXSETS_SINGLEYSET<ND>::SetA(std::vector<int> i,TARRAY<double,
          #endif
          std::vector<size_t> D=NA(); 
          #if !defined(DNDEBUG)        
-         for(int a=0;a<=static_cast<int>(ND)-1;a++){ if(i[a]<1 || i[a]>D[a]){ throw OUT_OF_RANGE<int>(i[a],1,D[a],std::string("SetA"),CLASS_NAME);} }
+         for(int a=0;a<=static_cast<int>(ND)-1;a++){ if(i[a]<1 || i[a]>static_cast<int>(D[a])){ throw OUT_OF_RANGE<int>(i[a],1,D[a],std::string("SetA"),CLASS_NAME);} }
          #endif
          _pSetA(i,A);
         }
