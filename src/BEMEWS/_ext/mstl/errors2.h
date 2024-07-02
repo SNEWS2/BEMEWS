@@ -96,7 +96,7 @@ class BASIC_ERROR : public std::exception
         BASIC_ERROR(const std::string &WHICH,const std::string &WHO,const int &WHERE)
         : std::exception(){ function=ThrownIn+WHICH;
                             object=InObject+WHO;
-                            char buffer[7]; sprintf(buffer,"%d",WHERE);
+                            char buffer[7]; snprintf(buffer,"%d",WHERE);
                             line=AtLine+std::string(buffer);
                            }
 
@@ -114,8 +114,8 @@ class BASIC_ERROR : public std::exception
 
         void ChangeWhere(const std::string &WHERE){ line=AtLine+WHERE;}
         void ChangeLine(const std::string &WHERE){ line=AtLine+WHERE;}
-        void ChangeWhere(const int &WHERE){ char buffer[7]; sprintf(buffer,"%d",WHERE); line=AtLine+std::string(buffer);}
-        void ChangeLine(const int &WHERE){ char buffer[7]; sprintf(buffer,"%d",WHERE); line=AtLine+std::string(buffer);}
+        void ChangeWhere(const int &WHERE){ char buffer[7]; snprintf(buffer,"%d",WHERE); line=AtLine+std::string(buffer);}
+        void ChangeLine(const int &WHERE){ char buffer[7]; snprintf(buffer,"%d",WHERE); line=AtLine+std::string(buffer);}
 
         void Change(const std::string &WHICH=Unknown,const std::string &WHO=Unknown,const std::string &WHERE=Unknown)
                  { function=( WHICH==Unknown ? function : ThrownIn+WHICH );
@@ -125,7 +125,7 @@ class BASIC_ERROR : public std::exception
         void Change(const std::string &WHICH,const std::string &WHO,const int &WHERE)
                  { function=ThrownIn+WHICH;
                    object=InObject+WHO;
-                   char buffer[7]; sprintf(buffer,"%d",WHERE); 
+                   char buffer[7]; snprintf(buffer,"%d",WHERE); 
                    line=AtLine+std::string(buffer);
                   }
 
