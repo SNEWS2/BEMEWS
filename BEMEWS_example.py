@@ -27,13 +27,13 @@ if __name__ == "__main__":
     import BEMEWS.data
 
     # class to accumulate input data for calcultion
-    ID = BEMEWS.InputDataEMEWS()
+    ID = BEMEWS.InputDataBEMEWS()
 
     # assign data fields
     ID.altitude = SNaltaz.alt.deg
     ID.azimuth = SNaltaz.az.deg
 
-    ID.outputfilenamestem = "out/EMEWS:PREM"
+    ID.outputfilenamestem = "out/BEMEWS:PREM"
 
     ID.densityprofile = str(files(BEMEWS.data).joinpath("PREM.rho.dat"))
     ID.electronfraction = str(files(BEMEWS.data).joinpath("PREM.Ye.dat"))
