@@ -74,7 +74,7 @@ interpolation::DISCONTINUOUS rho, Ye;
 // ********************************************************************** 
 
 PYBIND11_MODULE(_ext, m)
-{   class_<InputDataEMEWS>(m, "InputDataBEMEWS")
+{   class_<InputDataBEMEWS>(m, "InputDataBEMEWS")
         .def(init<>())
         .def_readwrite("altitude", &InputDataBEMEWS::altitude)
         .def_readwrite("azimuth", &InputDataBEMEWS::azimuth)
