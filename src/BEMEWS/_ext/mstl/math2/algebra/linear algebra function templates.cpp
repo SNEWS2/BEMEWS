@@ -2076,7 +2076,7 @@ template <std::size_t N> CVECTOR<double,N> TridiagonalSolve(MVECTOR<double,N> &L
      { CVECTOR<double,N> X, Y0(Y);
 
        try{ // effectively zero all the subdiagonal terms
-            int i,imax=static_cast<int>(D.N())-2;
+            int imax=static_cast<int>(D.N())-2;
             for(int i=0;i<=imax;i++){ D[i+1]-=L[i]/D[i]*U[i]; Y[i+1]-=L[i]/D[i]*Y[i]; }
 
             // back substitution
