@@ -9,5 +9,5 @@ dist/
 # editor-specific
 .vscode/
 
-# output files of EMEWS_example.py
+# output files of BEMEWS_example.py
 out/
