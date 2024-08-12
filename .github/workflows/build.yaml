@@ -5,6 +5,8 @@ name: Build BEMEWS
 on:
   push:
     branches: [ main ]
+    tags: # Sequence of patterns matched against refs/tags
+      - 'v*' # Any tag matching v*, e.g. v1.0, v1.2b1
   pull_request:
     branches: [ main ]
 
@@ -16,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest] # [macos-latest, ubuntu-latest, windows-latest]
-        python-version: ['3.12'] # ['3.9', '3.10', '3.11', '3.12']
+        python-version: ['3.10', '3.11', '3.12']
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -52,3 +54,43 @@ jobs:
       - name: Run example script
         run: |
           python BEMEWS_example.py
+
+      - name: Upload distributions
+        uses: actions/upload-artifact@v4
+        with:
+          path: dist/
+          name: release-dists-${{ matrix.os }}-${{ matrix.python-version }}
+          if-no-files-found: error
+
+  publish_to_pypi:
+    # Only run if a new tag was created …
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    # … and if all builds above were successful
+    needs: build
+
+    runs-on: ubuntu-latest
+    permissions:
+      # See https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Retrieve release distributions
+        uses: actions/download-artifact@v4
+        with:
+          path: dist/
+          name: release-dists-*
+          merge-multiple: true
+
+      - name: Publish distribution 📦 to Test PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+      - name: Create draft release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${GITHUB_REF/refs\/tags\//}
+          draft: true
+          prerelease: false
+          generate_release_notes: true
