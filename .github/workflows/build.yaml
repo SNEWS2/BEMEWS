@@ -1,7 +1,9 @@
 name: Build BEMEWS
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the main branch
+# Workflow that builds and tests the BEMEWS package on every pull request
+# and on every push to the main branch. If a new version tag is pushed, the
+# workflow will also publish the package to PyPI.
+
 on:
   push:
     branches: [ main ]
@@ -81,5 +83,5 @@ jobs:
           pattern: release-dists-*
           merge-multiple: true
 
-      - name: Publish distribution 📦 to Test PyPI
+      - name: Publish distribution 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
