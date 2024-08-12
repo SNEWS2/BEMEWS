@@ -79,7 +79,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: dist/
-          name: release-dists-*
+          pattern: release-dists-*
           merge-multiple: true
 
       - name: Publish distribution 📦 to Test PyPI
