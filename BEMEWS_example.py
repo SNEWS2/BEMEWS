@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
+import os
+import numpy as np
+
 import configparser
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 
 from importlib.resources import files
-import numpy as np
 from astropy import units as u
 from astropy.time import Time
 from astropy.coordinates import SkyCoord, EarthLocation, AltAz
@@ -43,8 +45,6 @@ if __name__ == "__main__":
                    help='Maximum energy ax MeV')
     p.add_argument('--accuracy', type=float,
                    help='Accuracy of Runge-Kutta solver')
-    p.add_argument('--output', action='store_true',
-                   help='Produce output as a function of path length')
     p.add_argument('--stepcounterlimit', type=int,
                    help='Output every N steps through the Earth (higher = less output)')
 
@@ -102,8 +102,11 @@ if __name__ == "__main__":
 
     # if set to True the BEMEWS module will output files in the 'out' directory
     # The stepcounterlimit controls how often output is written. The larger the number, the less often it happens. 
-    ID.outputflag = bool(settings['output'])
+    ID.outputflag = settings['output'] in ['True', 'true']
     ID.stepcounterlimit = int(settings['stepcounterlimit'])
+    
+    if ID.outputflag:
+        os.makedirs('out', exist_ok=True)
 
     # do the calculation. The return is a four dimensional array of transition probabilities nu_alpha -> nu_i: 
     # index order is matter/antimatter, energy, i, alpha
