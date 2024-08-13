@@ -18,7 +18,7 @@ using namespace prefixes;
 
 std::vector<std::string> fPvslambdafilename;
 
-void Initialize_Output(string outputfilenamestem,ofstream &fPvslambda,ofstream &fHvslambda)
+void Initialize_Output(string outputfilenamestem,ofstream &fPvslambda,ofstream &fHvslambda, bool ecsvformat)
          { stringstream filename; 
 
            fPvslambdafilename=vector<string>(NE);
@@ -44,7 +44,7 @@ void Close_Output(ofstream &fHvslambda)
 
 // ******************************************************
 
-void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative)
+void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative, bool ecsvformat)
       { array<MATRIX<complex<double>,NF,NF>,NM> VfMSW, dVfMSWdlambda;
 
         double r = sqrt( RE*RE + lambda*lambda - 2.*RE*lambda*sin(-altitude) );
@@ -161,7 +161,7 @@ void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double l
 
 // ************************************************************************
 
-void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative)
+void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative, bool ecsvformat)
       { string cmdotdat("cm.dat");
         stringstream filename;
 
@@ -286,7 +286,7 @@ void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double 
 
 // ************************************************************************
 
-void Output_Hvslambda(bool firsttime,bool lasttime,ofstream &fHvslambda,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative)
+void Output_Hvslambda(bool firsttime,bool lasttime,ofstream &fHvslambda,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative, bool ecsvformat)
           { MATRIX<complex<double>,NF,NF> VfMSW,VfMSWbar;
             double r, rrho, YYe;
 
