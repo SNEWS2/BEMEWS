@@ -48,18 +48,18 @@ void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double l
       { array<MATRIX<complex<double>,NF,NF>,NM> VfMSW, dVfMSWdlambda;
 
         double r = sqrt( RE*RE + lambda*lambda - 2.*RE*lambda*sin(-altitude) );
-	if(r > RE){ r = RE;}       
+        if(r > RE){ r = RE;}       
         double rrho=rho(r);
         double YYe=Ye(r);
 
         VfMSW[nu][e][e]=Ve(rrho,YYe);
         VfMSW[nu][mu][mu]=Vmu(rrho,YYe);
         VfMSW[nu][tau][tau]=Vtau(rrho,YYe);
-	VfMSW[antinu]=-VfMSW[nu];
+        VfMSW[antinu]=-VfMSW[nu];
 
-	vector<vector<MATRIX<complex<double>,NF,NF> > > Hf(NM,vector<MATRIX<complex<double>,NF,NF> >(NE));
-	vector<vector<MATRIX<complex<double>,NF,NF> > > UU(NM,vector<MATRIX<complex<double>,NF,NF> >(NE));	
-	vector<vector<MATRIX<complex<double>,NF,NF> > > Sa(NM,vector<MATRIX<complex<double>,NF,NF> >(NE)), Sm(NM,vector<MATRIX<complex<double>,NF,NF> >(NE)), Smf(NM,vector<MATRIX<complex<double>,NF,NF> >(NE)), Sfm(NM,vector<MATRIX<complex<double>,NF,NF> >(NE)), Sf(NM,vector<MATRIX<complex<double>,NF,NF> >(NE)); 
+        vector<vector<MATRIX<complex<double>,NF,NF> > > Hf(NM,vector<MATRIX<complex<double>,NF,NF> >(NE));
+        vector<vector<MATRIX<complex<double>,NF,NF> > > UU(NM,vector<MATRIX<complex<double>,NF,NF> >(NE));        
+        vector<vector<MATRIX<complex<double>,NF,NF> > > Sa(NM,vector<MATRIX<complex<double>,NF,NF> >(NE)), Sm(NM,vector<MATRIX<complex<double>,NF,NF> >(NE)), Smf(NM,vector<MATRIX<complex<double>,NF,NF> >(NE)), Sfm(NM,vector<MATRIX<complex<double>,NF,NF> >(NE)), Sf(NM,vector<MATRIX<complex<double>,NF,NF> >(NE)); 
 
         vector<vector<array<double,NF> > > kk(NM,vector<array<double,NF> >(NE));
         vector<vector<array<double,NF> > > dkk(NM,vector<array<double,NF> >(NE));
@@ -69,47 +69,47 @@ void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double l
         for(i=0;i<=NE-1;i++)
            { Hf[nu][i]=HfV[nu][i] + VfMSW[nu];
              kk[nu][i]=k(Hf[nu][i]);
-   	     dkk[nu][i]=deltak(kk[nu][i]);
-	     UU[nu][i]=MixingMatrix(Hf[nu][i],kk[nu][i],dkk[nu][i]);
+                dkk[nu][i]=deltak(kk[nu][i]);
+             UU[nu][i]=MixingMatrix(Hf[nu][i],kk[nu][i],dkk[nu][i]);
 
-	     Sa[nu][i] = W(Y[nu][i]) * B(Y[nu][i]);		
+             Sa[nu][i] = W(Y[nu][i]) * B(Y[nu][i]);                
 
-	     if(firsttime==false && lasttime==false){ Sm[nu][i] = Sa[nu][i] * Scumulative[nu][i];}
-	     else{ Sm[nu][i] = Adjoint(UV[nu])*UU[nu][i] * Sa[nu][i] * Scumulative[nu][i];}
-	     	     
+             if(firsttime==false && lasttime==false){ Sm[nu][i] = Sa[nu][i] * Scumulative[nu][i];}
+             else{ Sm[nu][i] = Adjoint(UV[nu])*UU[nu][i] * Sa[nu][i] * Scumulative[nu][i];}
+                          
              Smf[nu][i]= Sm[nu][i] * Adjoint(UV[nu]);
              
-	     if(lasttime==false){ 
-	        Sfm[nu][i] = UU[nu][i] * Sm[nu][i];
-	        Sf[nu][i] = UU[nu][i] * Smf[nu][i];
-	       } 
+             if(lasttime==false){ 
+                Sfm[nu][i] = UU[nu][i] * Sm[nu][i];
+                Sf[nu][i] = UU[nu][i] * Smf[nu][i];
+               } 
              else{ Sfm[nu][i] = UV[nu] * Sm[nu][i];
-	           Sf[nu][i] = UV[nu] * Smf[nu][i];
-	          }
+                   Sf[nu][i] = UV[nu] * Smf[nu][i];
+                  }
              // *******
 
              Hf[antinu][i]=HfV[antinu][i] + VfMSW[antinu];
-    	     kk[antinu][i]=kbar(Hf[antinu][i]);
-	     dkk[antinu][i]=deltakbar(kk[antinu][i]);
-	     UU[antinu][i]=MixingMatrix(Hf[antinu][i],kk[antinu][i],dkk[antinu][i]);
+                 kk[antinu][i]=kbar(Hf[antinu][i]);
+             dkk[antinu][i]=deltakbar(kk[antinu][i]);
+             UU[antinu][i]=MixingMatrix(Hf[antinu][i],kk[antinu][i],dkk[antinu][i]);
       
-	     Sa[antinu][i] = W(Y[antinu][i]) * B(Y[antinu][i]);
+             Sa[antinu][i] = W(Y[antinu][i]) * B(Y[antinu][i]);
 
-	     if(firsttime==false && lasttime==false){ Sm[antinu][i] = Sa[antinu][i] * Scumulative[antinu][i];}
-	     else{ Sm[antinu][i] = Adjoint(UV[antinu])*UU[antinu][i] * Sa[antinu][i] * Scumulative[antinu][i];}
-	     
+             if(firsttime==false && lasttime==false){ Sm[antinu][i] = Sa[antinu][i] * Scumulative[antinu][i];}
+             else{ Sm[antinu][i] = Adjoint(UV[antinu])*UU[antinu][i] * Sa[antinu][i] * Scumulative[antinu][i];}
+             
              Smf[antinu][i]= Sm[antinu][i] * Adjoint(UV[antinu]);
              
-	     if(lasttime==false)
-	       { Sfm[antinu][i] = UU[antinu][i] * Sm[antinu][i];
-            	 Sf[antinu][i] = UU[antinu][i] * Smf[antinu][i];
-            	}
+             if(lasttime==false)
+               { Sfm[antinu][i] = UU[antinu][i] * Sm[antinu][i];
+                     Sf[antinu][i] = UU[antinu][i] * Smf[antinu][i];
+                    }
              else{ Sfm[antinu][i] = UV[antinu] * Sm[antinu][i];
-            	   Sf[antinu][i] = UV[antinu] * Smf[antinu][i];
-            	  }	 
-	    }
+                       Sf[antinu][i] = UV[antinu] * Smf[antinu][i];
+                      }         
+            }
 
-	for(i=0;i<=NE-1;i++)
+        for(i=0;i<=NE-1;i++)
            { fPvslambda.open(fPvslambdafilename[i].c_str(),std::ofstream::app);
              fPvslambda.precision(12);
              
@@ -130,33 +130,33 @@ void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double l
              if(lasttime==true){ fPvslambda<<"\n"<<lambdamax0<<"\t"<<r;}
              if(firsttime==false && lasttime==false){ fPvslambda<<"\n"<<lambda<<"\t"<<r;}
 
-	     fPvslambda<<"\t"<<norm(Sm[nu][i][0][0])<<"\t"<<norm(Sm[nu][i][0][1])<<"\t"<<norm(Sm[nu][i][0][2]);
-	     fPvslambda<<"\t"<<norm(Sm[nu][i][1][0])<<"\t"<<norm(Sm[nu][i][1][1])<<"\t"<<norm(Sm[nu][i][1][2]);
-	     fPvslambda<<"\t"<<norm(Sm[nu][i][2][0])<<"\t"<<norm(Sm[nu][i][2][1])<<"\t"<<norm(Sm[nu][i][2][2]);
+             fPvslambda<<"\t"<<norm(Sm[nu][i][0][0])<<"\t"<<norm(Sm[nu][i][0][1])<<"\t"<<norm(Sm[nu][i][0][2]);
+             fPvslambda<<"\t"<<norm(Sm[nu][i][1][0])<<"\t"<<norm(Sm[nu][i][1][1])<<"\t"<<norm(Sm[nu][i][1][2]);
+             fPvslambda<<"\t"<<norm(Sm[nu][i][2][0])<<"\t"<<norm(Sm[nu][i][2][1])<<"\t"<<norm(Sm[nu][i][2][2]);
 
-	     fPvslambda<<"\t"<<norm(Sm[antinu][i][0][0])<<"\t"<<norm(Sm[antinu][i][0][1])<<"\t"<<norm(Sm[antinu][i][0][2]);
-	     fPvslambda<<"\t"<<norm(Sm[antinu][i][1][0])<<"\t"<<norm(Sm[antinu][i][1][1])<<"\t"<<norm(Sm[antinu][i][1][2]);
-	     fPvslambda<<"\t"<<norm(Sm[antinu][i][2][0])<<"\t"<<norm(Sm[antinu][i][2][1])<<"\t"<<norm(Sm[antinu][i][2][2]);
+             fPvslambda<<"\t"<<norm(Sm[antinu][i][0][0])<<"\t"<<norm(Sm[antinu][i][0][1])<<"\t"<<norm(Sm[antinu][i][0][2]);
+             fPvslambda<<"\t"<<norm(Sm[antinu][i][1][0])<<"\t"<<norm(Sm[antinu][i][1][1])<<"\t"<<norm(Sm[antinu][i][1][2]);
+             fPvslambda<<"\t"<<norm(Sm[antinu][i][2][0])<<"\t"<<norm(Sm[antinu][i][2][1])<<"\t"<<norm(Sm[antinu][i][2][2]);
 
-	     fPvslambda<<"\t"<<norm(Sfm[nu][i][e][0])<<"\t"<<norm(Sfm[nu][i][e][1])<<"\t"<<norm(Sfm[nu][i][e][2]);
-	     fPvslambda<<"\t"<<norm(Sfm[nu][i][mu][0])<<"\t"<<norm(Sfm[nu][i][mu][1])<<"\t"<<norm(Sfm[nu][i][mu][2]);
-	     fPvslambda<<"\t"<<norm(Sfm[nu][i][tau][0])<<"\t"<<norm(Sfm[nu][i][tau][1])<<"\t"<<norm(Sfm[nu][i][tau][2]);
+             fPvslambda<<"\t"<<norm(Sfm[nu][i][e][0])<<"\t"<<norm(Sfm[nu][i][e][1])<<"\t"<<norm(Sfm[nu][i][e][2]);
+             fPvslambda<<"\t"<<norm(Sfm[nu][i][mu][0])<<"\t"<<norm(Sfm[nu][i][mu][1])<<"\t"<<norm(Sfm[nu][i][mu][2]);
+             fPvslambda<<"\t"<<norm(Sfm[nu][i][tau][0])<<"\t"<<norm(Sfm[nu][i][tau][1])<<"\t"<<norm(Sfm[nu][i][tau][2]);
 
-	     fPvslambda<<"\t"<<norm(Sfm[antinu][i][e][0])<<"\t"<<norm(Sfm[antinu][i][e][1])<<"\t"<<norm(Sfm[antinu][i][e][2]);
-	     fPvslambda<<"\t"<<norm(Sfm[antinu][i][mu][0])<<"\t"<<norm(Sfm[antinu][i][mu][1])<<"\t"<<norm(Sfm[antinu][i][mu][2]);
-	     fPvslambda<<"\t"<<norm(Sfm[antinu][i][tau][0])<<"\t"<<norm(Sfm[antinu][i][tau][1])<<"\t"<<norm(Sfm[antinu][i][tau][2]);
+             fPvslambda<<"\t"<<norm(Sfm[antinu][i][e][0])<<"\t"<<norm(Sfm[antinu][i][e][1])<<"\t"<<norm(Sfm[antinu][i][e][2]);
+             fPvslambda<<"\t"<<norm(Sfm[antinu][i][mu][0])<<"\t"<<norm(Sfm[antinu][i][mu][1])<<"\t"<<norm(Sfm[antinu][i][mu][2]);
+             fPvslambda<<"\t"<<norm(Sfm[antinu][i][tau][0])<<"\t"<<norm(Sfm[antinu][i][tau][1])<<"\t"<<norm(Sfm[antinu][i][tau][2]);
 
-	     fPvslambda<<"\t"<<norm(Sf[nu][i][e][e])<<"\t"<<norm(Sf[nu][i][e][mu])<<"\t"<<norm(Sf[nu][i][e][tau]);
-	     fPvslambda<<"\t"<<norm(Sf[nu][i][mu][e])<<"\t"<<norm(Sf[nu][i][mu][mu])<<"\t"<<norm(Sf[nu][i][mu][tau]);
-	     fPvslambda<<"\t"<<norm(Sf[nu][i][tau][e])<<"\t"<<norm(Sf[nu][i][tau][mu])<<"\t"<<norm(Sf[nu][i][tau][tau]);
+             fPvslambda<<"\t"<<norm(Sf[nu][i][e][e])<<"\t"<<norm(Sf[nu][i][e][mu])<<"\t"<<norm(Sf[nu][i][e][tau]);
+             fPvslambda<<"\t"<<norm(Sf[nu][i][mu][e])<<"\t"<<norm(Sf[nu][i][mu][mu])<<"\t"<<norm(Sf[nu][i][mu][tau]);
+             fPvslambda<<"\t"<<norm(Sf[nu][i][tau][e])<<"\t"<<norm(Sf[nu][i][tau][mu])<<"\t"<<norm(Sf[nu][i][tau][tau]);
 
-	     fPvslambda<<"\t"<<norm(Sf[antinu][i][e][e])<<"\t"<<norm(Sf[antinu][i][e][mu])<<"\t"<<norm(Sf[antinu][i][e][tau]);
-	     fPvslambda<<"\t"<<norm(Sf[antinu][i][mu][e])<<"\t"<<norm(Sf[antinu][i][mu][mu])<<"\t"<<norm(Sf[antinu][i][mu][tau]);
-	     fPvslambda<<"\t"<<norm(Sf[antinu][i][tau][e])<<"\t"<<norm(Sf[antinu][i][tau][mu])<<"\t"<<norm(Sf[antinu][i][tau][tau]);
+             fPvslambda<<"\t"<<norm(Sf[antinu][i][e][e])<<"\t"<<norm(Sf[antinu][i][e][mu])<<"\t"<<norm(Sf[antinu][i][e][tau]);
+             fPvslambda<<"\t"<<norm(Sf[antinu][i][mu][e])<<"\t"<<norm(Sf[antinu][i][mu][mu])<<"\t"<<norm(Sf[antinu][i][mu][tau]);
+             fPvslambda<<"\t"<<norm(Sf[antinu][i][tau][e])<<"\t"<<norm(Sf[antinu][i][tau][mu])<<"\t"<<norm(Sf[antinu][i][tau][tau]);
 
-	     fPvslambda.flush();
+             fPvslambda.flush();
              fPvslambda.close();
-	    }
+            }
         }
 
 // ************************************************************************
@@ -173,7 +173,7 @@ void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double 
         // ******
 
         r = sqrt( RE*RE + lambda*lambda - 2.*RE*lambda*sin(-altitude) );
-	if(r > RE){ r = RE;}              
+        if(r > RE){ r = RE;}              
         rrho=rho(r);
         YYe=Ye(r); 
 
@@ -182,60 +182,60 @@ void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double 
         VfMSW[nu][e][e]=Ve(rrho,YYe);
         VfMSW[nu][mu][mu]=Vmu(rrho,YYe);
         VfMSW[nu][tau][tau]=Vtau(rrho,YYe);
-	VfMSW[antinu]=-VfMSW[nu];
+        VfMSW[antinu]=-VfMSW[nu];
 
-	vector<vector<MATRIX<complex<double>,NF,NF> > > Hf(NM,vector<MATRIX<complex<double>,NF,NF> >(NE));
-	vector<vector<MATRIX<complex<double>,NF,NF> > > UU(NM,vector<MATRIX<complex<double>,NF,NF> >(NE));	
-	vector<vector<MATRIX<complex<double>,NF,NF> > > Sa(NM,vector<MATRIX<complex<double>,NF,NF> >(NE)), Sm(NM,vector<MATRIX<complex<double>,NF,NF> >(NE)), Smf(NM,vector<MATRIX<complex<double>,NF,NF> >(NE)), Sfm(NM,vector<MATRIX<complex<double>,NF,NF> >(NE)), Sf(NM,vector<MATRIX<complex<double>,NF,NF> >(NE)); 
+        vector<vector<MATRIX<complex<double>,NF,NF> > > Hf(NM,vector<MATRIX<complex<double>,NF,NF> >(NE));
+        vector<vector<MATRIX<complex<double>,NF,NF> > > UU(NM,vector<MATRIX<complex<double>,NF,NF> >(NE));        
+        vector<vector<MATRIX<complex<double>,NF,NF> > > Sa(NM,vector<MATRIX<complex<double>,NF,NF> >(NE)), Sm(NM,vector<MATRIX<complex<double>,NF,NF> >(NE)), Smf(NM,vector<MATRIX<complex<double>,NF,NF> >(NE)), Sfm(NM,vector<MATRIX<complex<double>,NF,NF> >(NE)), Sf(NM,vector<MATRIX<complex<double>,NF,NF> >(NE)); 
 
         vector<vector<array<double,NF> > > kk(NM,vector<array<double,NF> >(NE));
         vector<vector<array<double,NF> > > dkk(NM,vector<array<double,NF> >(NE));
 
         int i;
         #pragma omp parallel for schedule(static)
-	for(i=0;i<=NE-1;i++)
+        for(i=0;i<=NE-1;i++)
            { Hf[nu][i]=HfV[nu][i] + VfMSW[nu];
              kk[nu][i]=k(Hf[nu][i]);
-  	     dkk[nu][i]=deltak(kk[nu][i]);
-	     UU[nu][i]=MixingMatrix(Hf[nu][i],kk[nu][i],dkk[nu][i]);
+               dkk[nu][i]=deltak(kk[nu][i]);
+             UU[nu][i]=MixingMatrix(Hf[nu][i],kk[nu][i],dkk[nu][i]);
 
-	     Sa[nu][i] = W(Y[nu][i]) * B(Y[nu][i]);
+             Sa[nu][i] = W(Y[nu][i]) * B(Y[nu][i]);
 
              if(lasttime==false){ Sm[nu][i] = Sa[nu][i] * Scumulative[nu][i];}
-	     else{ Sm[nu][i] = Adjoint(UV[nu])*UU[nu][i] * Sa[nu][i] * Scumulative[nu][i];}
+             else{ Sm[nu][i] = Adjoint(UV[nu])*UU[nu][i] * Sa[nu][i] * Scumulative[nu][i];}
              
              Smf[nu][i]= Sm[nu][i] * Adjoint(UV[nu]);
              
-	     if(lasttime==false){ 
-	        Sfm[nu][i] = UU[nu][i] * Sm[nu][i];
-	        Sf[nu][i] = UU[nu][i] * Smf[nu][i];
-	       } 
+             if(lasttime==false){ 
+                Sfm[nu][i] = UU[nu][i] * Sm[nu][i];
+                Sf[nu][i] = UU[nu][i] * Smf[nu][i];
+               } 
              else{ Sfm[nu][i] = UV[nu] * Sm[nu][i];
-	           Sf[nu][i] = UV[nu] * Smf[nu][i];
-	          }
+                   Sf[nu][i] = UV[nu] * Smf[nu][i];
+                  }
 
-	     // *********
-	     
+             // *********
+             
              Hf[antinu][i]=HfV[antinu][i] + VfMSW[antinu];
-  	     kk[antinu][i]=kbar(Hf[antinu][i]);
-	     dkk[antinu][i]=deltakbar(kk[antinu][i]);
-	     UU[antinu][i]=MixingMatrix(Hf[antinu][i],kk[antinu][i],dkk[antinu][i]);
+               kk[antinu][i]=kbar(Hf[antinu][i]);
+             dkk[antinu][i]=deltakbar(kk[antinu][i]);
+             UU[antinu][i]=MixingMatrix(Hf[antinu][i],kk[antinu][i],dkk[antinu][i]);
        
-	     Sa[antinu][i] = W(Y[antinu][i]) * B(Y[antinu][i]);
+             Sa[antinu][i] = W(Y[antinu][i]) * B(Y[antinu][i]);
 
              if(lasttime==false){ Sm[antinu][i] = Sa[antinu][i] * Scumulative[antinu][i];}
-	     else{ Sm[antinu][i] = Adjoint(UV[antinu])*UU[antinu][i] * Sa[antinu][i] * Scumulative[antinu][i];}
-	     	     
+             else{ Sm[antinu][i] = Adjoint(UV[antinu])*UU[antinu][i] * Sa[antinu][i] * Scumulative[antinu][i];}
+                          
              Smf[antinu][i]= Sm[antinu][i] * Adjoint(UV[antinu]);
              
-	     if(lasttime==false)
-	       { Sfm[antinu][i] = UU[antinu][i] * Sm[antinu][i];
-            	 Sf[antinu][i] = UU[antinu][i] * Smf[antinu][i];
-            	}
+             if(lasttime==false)
+               { Sfm[antinu][i] = UU[antinu][i] * Sm[antinu][i];
+                     Sf[antinu][i] = UU[antinu][i] * Smf[antinu][i];
+                    }
              else{ Sfm[antinu][i] = UV[antinu] * Sm[antinu][i];
-            	   Sf[antinu][i] = UV[antinu] * Smf[antinu][i];
-            	  }
-	    }
+                       Sf[antinu][i] = UV[antinu] * Smf[antinu][i];
+                      }
+            }
 
         // *******
         
@@ -252,33 +252,33 @@ void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double 
         fPvsE<<"\t Pee \t Pemu \t Petau \t Pmue \t Pmumu \t Pmutau \t Ptaue \t Ptaumu \t Ptautau";
         fPvsE<<"\t Pbaree \t Pbaremu \t Pbaretau \t Pbarmue \t Pbarmumu \t Pbarmutau \t Pbartaue \t Pbartaumu \t Pbartautau";        
 
-	for(i=0;i<=NE-1;i++)
+        for(i=0;i<=NE-1;i++)
            { fPvsE<<"\n"<<E[i]/(mega*cgs::units::eV); 
 
-	     fPvsE<<"\t"<<norm(Sm[nu][i][0][0])<<"\t"<<norm(Sm[nu][i][0][1])<<"\t"<<norm(Sm[nu][i][0][2]);
-	     fPvsE<<"\t"<<norm(Sm[nu][i][1][0])<<"\t"<<norm(Sm[nu][i][1][1])<<"\t"<<norm(Sm[nu][i][1][2]);
-	     fPvsE<<"\t"<<norm(Sm[nu][i][2][0])<<"\t"<<norm(Sm[nu][i][2][1])<<"\t"<<norm(Sm[nu][i][2][2]);
+             fPvsE<<"\t"<<norm(Sm[nu][i][0][0])<<"\t"<<norm(Sm[nu][i][0][1])<<"\t"<<norm(Sm[nu][i][0][2]);
+             fPvsE<<"\t"<<norm(Sm[nu][i][1][0])<<"\t"<<norm(Sm[nu][i][1][1])<<"\t"<<norm(Sm[nu][i][1][2]);
+             fPvsE<<"\t"<<norm(Sm[nu][i][2][0])<<"\t"<<norm(Sm[nu][i][2][1])<<"\t"<<norm(Sm[nu][i][2][2]);
 
-	     fPvsE<<"\t"<<norm(Sm[antinu][i][0][0])<<"\t"<<norm(Sm[antinu][i][0][1])<<"\t"<<norm(Sm[antinu][i][0][2]);
-	     fPvsE<<"\t"<<norm(Sm[antinu][i][1][0])<<"\t"<<norm(Sm[antinu][i][1][1])<<"\t"<<norm(Sm[antinu][i][1][2]);
-	     fPvsE<<"\t"<<norm(Sm[antinu][i][2][0])<<"\t"<<norm(Sm[antinu][i][2][1])<<"\t"<<norm(Sm[antinu][i][2][2]);
+             fPvsE<<"\t"<<norm(Sm[antinu][i][0][0])<<"\t"<<norm(Sm[antinu][i][0][1])<<"\t"<<norm(Sm[antinu][i][0][2]);
+             fPvsE<<"\t"<<norm(Sm[antinu][i][1][0])<<"\t"<<norm(Sm[antinu][i][1][1])<<"\t"<<norm(Sm[antinu][i][1][2]);
+             fPvsE<<"\t"<<norm(Sm[antinu][i][2][0])<<"\t"<<norm(Sm[antinu][i][2][1])<<"\t"<<norm(Sm[antinu][i][2][2]);
 
-	     fPvsE<<"\t"<<norm(Sfm[nu][i][e][0])<<"\t"<<norm(Sfm[nu][i][e][1])<<"\t"<<norm(Sfm[nu][i][e][2]);
-	     fPvsE<<"\t"<<norm(Sfm[nu][i][mu][0])<<"\t"<<norm(Sfm[nu][i][mu][1])<<"\t"<<norm(Sfm[nu][i][mu][2]);
-	     fPvsE<<"\t"<<norm(Sfm[nu][i][tau][0])<<"\t"<<norm(Sfm[nu][i][tau][1])<<"\t"<<norm(Sfm[nu][i][tau][2]);
+             fPvsE<<"\t"<<norm(Sfm[nu][i][e][0])<<"\t"<<norm(Sfm[nu][i][e][1])<<"\t"<<norm(Sfm[nu][i][e][2]);
+             fPvsE<<"\t"<<norm(Sfm[nu][i][mu][0])<<"\t"<<norm(Sfm[nu][i][mu][1])<<"\t"<<norm(Sfm[nu][i][mu][2]);
+             fPvsE<<"\t"<<norm(Sfm[nu][i][tau][0])<<"\t"<<norm(Sfm[nu][i][tau][1])<<"\t"<<norm(Sfm[nu][i][tau][2]);
 
-	     fPvsE<<"\t"<<norm(Sfm[antinu][i][e][0])<<"\t"<<norm(Sfm[antinu][i][e][1])<<"\t"<<norm(Sfm[antinu][i][e][2]);
-	     fPvsE<<"\t"<<norm(Sfm[antinu][i][mu][0])<<"\t"<<norm(Sfm[antinu][i][mu][1])<<"\t"<<norm(Sfm[antinu][i][mu][2]);
-	     fPvsE<<"\t"<<norm(Sfm[antinu][i][tau][0])<<"\t"<<norm(Sfm[antinu][i][tau][1])<<"\t"<<norm(Sfm[antinu][i][tau][2]);
+             fPvsE<<"\t"<<norm(Sfm[antinu][i][e][0])<<"\t"<<norm(Sfm[antinu][i][e][1])<<"\t"<<norm(Sfm[antinu][i][e][2]);
+             fPvsE<<"\t"<<norm(Sfm[antinu][i][mu][0])<<"\t"<<norm(Sfm[antinu][i][mu][1])<<"\t"<<norm(Sfm[antinu][i][mu][2]);
+             fPvsE<<"\t"<<norm(Sfm[antinu][i][tau][0])<<"\t"<<norm(Sfm[antinu][i][tau][1])<<"\t"<<norm(Sfm[antinu][i][tau][2]);
 
-	     fPvsE<<"\t"<<norm(Sf[nu][i][e][e])<<"\t"<<norm(Sf[nu][i][e][mu])<<"\t"<<norm(Sf[nu][i][e][tau]);
-	     fPvsE<<"\t"<<norm(Sf[nu][i][mu][e])<<"\t"<<norm(Sf[nu][i][mu][mu])<<"\t"<<norm(Sf[nu][i][mu][tau]);
-	     fPvsE<<"\t"<<norm(Sf[nu][i][tau][e])<<"\t"<<norm(Sf[nu][i][tau][mu])<<"\t"<<norm(Sf[nu][i][tau][tau]);
+             fPvsE<<"\t"<<norm(Sf[nu][i][e][e])<<"\t"<<norm(Sf[nu][i][e][mu])<<"\t"<<norm(Sf[nu][i][e][tau]);
+             fPvsE<<"\t"<<norm(Sf[nu][i][mu][e])<<"\t"<<norm(Sf[nu][i][mu][mu])<<"\t"<<norm(Sf[nu][i][mu][tau]);
+             fPvsE<<"\t"<<norm(Sf[nu][i][tau][e])<<"\t"<<norm(Sf[nu][i][tau][mu])<<"\t"<<norm(Sf[nu][i][tau][tau]);
 
-	     fPvsE<<"\t"<<norm(Sf[antinu][i][e][e])<<"\t"<<norm(Sf[antinu][i][e][mu])<<"\t"<<norm(Sf[antinu][i][e][tau]);
-	     fPvsE<<"\t"<<norm(Sf[antinu][i][mu][e])<<"\t"<<norm(Sf[antinu][i][mu][mu])<<"\t"<<norm(Sf[antinu][i][mu][tau]);
-	     fPvsE<<"\t"<<norm(Sf[antinu][i][tau][e])<<"\t"<<norm(Sf[antinu][i][tau][mu])<<"\t"<<norm(Sf[antinu][i][tau][tau]);
-	    }
+             fPvsE<<"\t"<<norm(Sf[antinu][i][e][e])<<"\t"<<norm(Sf[antinu][i][e][mu])<<"\t"<<norm(Sf[antinu][i][e][tau]);
+             fPvsE<<"\t"<<norm(Sf[antinu][i][mu][e])<<"\t"<<norm(Sf[antinu][i][mu][mu])<<"\t"<<norm(Sf[antinu][i][mu][tau]);
+             fPvsE<<"\t"<<norm(Sf[antinu][i][tau][e])<<"\t"<<norm(Sf[antinu][i][tau][mu])<<"\t"<<norm(Sf[antinu][i][tau][tau]);
+            }
 
          fPvsE.flush();
          fPvsE.close();
@@ -293,7 +293,7 @@ void Output_Hvslambda(bool firsttime,bool lasttime,ofstream &fHvslambda,double l
             // *************
 
             r = sqrt( RE*RE + lambda*lambda - 2.*RE*lambda*sin(-altitude) );
-	    if(r > RE){ r = RE;}       	   
+            if(r > RE){ r = RE;}                  
             rrho=YYe=0.; 
 
             // ****************
