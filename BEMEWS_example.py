@@ -45,6 +45,10 @@ if __name__ == "__main__":
                    help='Maximum energy ax MeV')
     p.add_argument('--accuracy', type=float,
                    help='Accuracy of Runge-Kutta solver')
+    p.add_argument('--output', action='store_true',
+                   help='Output calculations to file(s)')
+    p.add_argument('--ecsvformat', action='store_true',
+                   help='Output using astropy-compatible ECSV format')
     p.add_argument('--stepcounterlimit', type=int,
                    help='Output every N steps through the Earth (higher = less output)')
 
@@ -57,9 +61,7 @@ if __name__ == "__main__":
     for k in config.keys():
         defaults.update(dict(config[k]))
     settings = defaults
-    settings.update({k: v for k, v in args.items() if v is not None})
-
-    print(settings)
+    settings.update({k: v for k, v in args.items() if v is not None and v is not False})
 
     # skycoordinates of neutrino source
     source = SkyCoord.from_name(settings['source']) 
@@ -103,8 +105,9 @@ if __name__ == "__main__":
     # if set to True the BEMEWS module will output files in the 'out' directory
     # The stepcounterlimit controls how often output is written. The larger the number, the less often it happens. 
     ID.outputflag = settings['output'] in ['True', 'true']
+    ID.ecsvformat = settings['ecsvformat'] if isinstance(settings['ecsvformat'], bool) else settings['ecsvformat'] in ['True', 'true']
     ID.stepcounterlimit = int(settings['stepcounterlimit'])
-    
+
     if ID.outputflag:
         os.makedirs('out', exist_ok=True)
 

@@ -92,6 +92,7 @@ PYBIND11_MODULE(_ext, m)
         .def_readwrite("accuracy", &InputDataBEMEWS::accuracy)
         .def_readwrite("stepcounterlimit", &InputDataBEMEWS::stepcounterlimit)
         .def_readwrite("NE", &InputDataBEMEWS::NE)
+        .def_readwrite("ecsvformat", &InputDataBEMEWS::ecsvformat)
         .def_readwrite("outputflag", &InputDataBEMEWS::outputflag)
         ;
 
@@ -162,7 +163,7 @@ vector<vector<vector<vector<double> > > > Run(InputDataBEMEWS ID)
            ofstream fHvslambda;               // a file for anything else
            ofstream fSvsE;               
 
-           if(ID.outputflag==true){ Initialize_Output(outputfilenamestem,fPvslambda,fHvslambda);}
+           if(ID.outputflag==true){ Initialize_Output(outputfilenamestem,fPvslambda,fHvslambda,ID);}
 
            // *****************************************************
            // *****************************************************
@@ -330,14 +331,14 @@ vector<vector<vector<vector<double> > > > Run(InputDataBEMEWS ID)
                 if(ID.outputflag==true){ output=true;}
                 if(output==true){ 
                     if(firsttime==true){                 
-                       Output_Pvslambda(firsttime,lasttime,fPvslambda,lambdamin,Y,Scumulative);
-                       Output_Hvslambda(firsttime,lasttime,fHvslambda,lambdamin,Y,Scumulative);
+                       Output_Pvslambda(firsttime,lasttime,fPvslambda,lambdamin,Y,Scumulative,ID);
+                       Output_Hvslambda(firsttime,lasttime,fHvslambda,lambdamin,Y,Scumulative,ID);
                       }                                        
                       
                     firsttime = false;                                                                   
 
-                    Output_Pvslambda(firsttime,lasttime,fPvslambda,lambdamin,Y,Scumulative);
-                    Output_Hvslambda(firsttime,lasttime,fHvslambda,lambdamin,Y,Scumulative);
+                    Output_Pvslambda(firsttime,lasttime,fPvslambda,lambdamin,Y,Scumulative,ID);
+                    Output_Hvslambda(firsttime,lasttime,fHvslambda,lambdamin,Y,Scumulative,ID);
                     
                     output = false;                    
                    } 
@@ -454,9 +455,9 @@ vector<vector<vector<vector<double> > > > Run(InputDataBEMEWS ID)
                     if(output==true)
                       { cout<<"\nOutput at\t"<<lambda<<flush;
                       
-                        Output_Pvslambda(firsttime,lasttime,fPvslambda,lambda,Y,Scumulative);
-                        Output_Hvslambda(firsttime,lasttime,fHvslambda,lambda,Y,Scumulative);
-                        //Output_PvsE(lasttime,fPvsE,outputfilenamestem,lambda,Y,Scumulative);
+                        Output_Pvslambda(firsttime,lasttime,fPvslambda,lambda,Y,Scumulative,ID);
+                        Output_Hvslambda(firsttime,lasttime,fHvslambda,lambda,Y,Scumulative,ID);
+                        //Output_PvsE(lasttime,fPvsE,outputfilenamestem,lambda,Y,Scumulative,ID);
                         
                         output=false;
                        }
@@ -477,14 +478,14 @@ vector<vector<vector<vector<double> > > > Run(InputDataBEMEWS ID)
                 else{ // output at the end of the code
                       if(ID.outputflag==true){ output = true;}
                       if(output==true){ 
-                          Output_Pvslambda(firsttime,lasttime,fPvslambda,lambdamax,Y,Scumulative);
-                          Output_Hvslambda(firsttime,lasttime,fHvslambda,lambdamax,Y,Scumulative);                          
+                          Output_Pvslambda(firsttime,lasttime,fPvslambda,lambdamax,Y,Scumulative,ID);
+                          Output_Hvslambda(firsttime,lasttime,fHvslambda,lambdamax,Y,Scumulative,ID);
                           
                           lasttime = true;                          
                           
-                          Output_Pvslambda(firsttime,lasttime,fPvslambda,lambdamax,Y,Scumulative);
-                          Output_Hvslambda(firsttime,lasttime,fHvslambda,lambdamax,Y,Scumulative);                          
-                          Output_PvsE(lasttime,fPvsE,outputfilenamestem,lambdamax,Y,Scumulative);                          
+                          Output_Pvslambda(firsttime,lasttime,fPvslambda,lambdamax,Y,Scumulative,ID);
+                          Output_Hvslambda(firsttime,lasttime,fHvslambda,lambdamax,Y,Scumulative,ID);
+                          Output_PvsE(lasttime,fPvsE,outputfilenamestem,lambdamax,Y,Scumulative,ID);
                           
                           output = false;
                          }

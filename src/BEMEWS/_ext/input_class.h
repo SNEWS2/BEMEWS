@@ -28,6 +28,7 @@ struct InputDataBEMEWS
          double accuracy;
          double stepcounterlimit; // how often it outputs data
          bool outputflag; // whether the code outputs data as it does the integration
+         bool ecsvformat; // whether the output is in ECSV or tab-separated text files
 
          InputDataBEMEWS(void) {;}  
         };
