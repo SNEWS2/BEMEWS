@@ -12,7 +12,7 @@ authors = [
     {name="Anne Graf"},
 ]
 
-version = "1.0"
+version = "1.0a1"
 requires-python = ">=3.9"  # TODO: Also update classifiers below!
 dependencies = [
     "numpy >= 1.16",

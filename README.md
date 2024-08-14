@@ -3,7 +3,7 @@ Image by dreamstudio.ai
 
 
 # BEMEWS
-A python module for calculating the Earth-matter Effect. Works standalone or with SNEWPY
+A python module for calculating the Earth-matter Effect. BEMEWS is a standalone module which SNEWPY uses to compute the Earth-Matter Effect for supernova neutrinos. The BEMEWS_example.py script shows how to use the module in the standalone mode. The EarthMatter flavor transformation class in SNEWPY is essentially the same script but with the output turned off. 
 
 1) You will need the python-devel, pybind11 and setuptools packages
 
@@ -26,8 +26,8 @@ sudo python3 setup.py install
 
 TROUBLESHOOTING:
 
-1) When using EMEWS you may have to set the PYTHONPATH environment variable to your PWD
-   and/or wherever the EMEWS module was installed in steps 3) or step 4)
+1) When using BEMEWS you may have to set the PYTHONPATH environment variable to your PWD
+   and/or wherever the BEMEWS module was installed in steps 3) or step 4)
 
 2) If your script still cannot find the module you may need to put the *.so library in the same directory
    as the file. The *.so library is in one of the subfolders in the build directory. 
