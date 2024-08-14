@@ -70,7 +70,7 @@ void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double l
         vector<vector<array<double,NF> > > kk(NM,vector<array<double,NF> >(NE));
         vector<vector<array<double,NF> > > dkk(NM,vector<array<double,NF> >(NE));
 
-        const string delimiter = ecsvformat ? string(",") : string("\t");
+        const string delimiter = ecsvformat ? string(" ") : string("\t");
       
         int i;
         #pragma omp parallel for schedule(static)
@@ -123,6 +123,7 @@ void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double l
              
              if(firsttime==true){
                if (ecsvformat) {
+                 // ECSV YAML header
                  fPvslambda << "# %ECSV 1.0\n# ---\n# datatype:\n"
                       << "# - {name: lambda, unit: cm, datatype: float64, description: path length}\n"
                       << "# - {name: r, unit: cm, datatype: float64, description: radial distance}\n";
@@ -134,19 +135,31 @@ void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double l
                  for (int j=0; j<2; ++j)
                    for (int k=1; k<=3; ++k)
                      for (int l=1; l<=3; ++l)
-                       fPvslambda << "# - {name: P" << pcl[j] << k << l << ", datetype: float64, description: " << k << "->" << l << " transition probability\n";
+                       fPvslambda << "# - {name: P" << pcl[j] << k << l << ", datatype: float64, description: " << k << "->" << l << " transition probability}\n";
  
                  // Flavor-mass transitions
                  for (int j=0; j<2; ++j)
                    for (int k=0; k<=2; ++k)
                      for (int l=1; l<=3; ++l)
-                       fPvslambda << "# - {name: P" << pcl[j] << flavor[k] << l << ", datetype: float64, description: " << flavor[k] << "->" << l << " transition probability\n";
+                       fPvslambda << "# - {name: P" << pcl[j] << flavor[k] << l << ", datatype: float64, description: " << flavor[k] << "->" << l << " transition probability}\n";
  
                  // Flavor-flavor transitions
                  for (int j=0; j<2; ++j)
                    for (int k=0; k<=2; ++k)
                      for (int l=0; l<=2; ++l)
-                       fPvslambda << "# - {name: P" << pcl[j] << flavor[k] << flavor[l] << ", datetype: float64, description: " << flavor[k] << "->" << flavor[l] << " transition probability\n";
+                       fPvslambda << "# - {name: P" << pcl[j] << flavor[k] << flavor[l] << ", datatype: float64, description: " << flavor[k] << "->" << flavor[l] << " transition probability}\n";
+
+                 // First-line column names
+                 fPvslambda<<"lambda r";
+ 
+                 fPvslambda<<" P11  P12  P13  P21  P22  P23  P31  P32  P33";
+                 fPvslambda<<" Pbar11  Pbar12  Pbar13  Pbar21  Pbar22  Pbar23  Pbar31  Pbar32  Pbar33";
+ 
+                 fPvslambda<<" Pe1  Pe2  Pe3  Pmu1  Pmu2  Pmu3  Ptau1  Ptau2  Ptau3";
+                 fPvslambda<<" Pbare1  Pbare2  Pbare3  Pbarmu1  Pbarmu2  Pbarmu3  Pbartau1  Pbartau2  Pbartau3";
+ 
+                 fPvslambda<<" Pee  Pemu  Petau  Pmue  Pmumu  Pmutau  Ptaue  Ptaumu  Ptautau";
+                 fPvslambda<<" Pbaree  Pbaremu  Pbaretau  Pbarmue  Pbarmumu  Pbarmutau  Pbartaue  Pbartaumu  Pbartautau";
                }
                else {
                  fPvslambda<<"lambda [cm] \t r [cm]";
@@ -288,6 +301,7 @@ void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double 
         // *******
 
         if (ecsvformat) {
+          // ECSV YAML header
           fPvsE << "# %ECSV 1.0\n# ---\n# datatype:\n"
                 << "# - {name: E, unit: MeV, datatype: float64, description: neutrino energy}\n";
 
@@ -298,19 +312,31 @@ void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double 
           for (int j=0; j<2; ++j)
             for (int k=1; k<=3; ++k)
               for (int l=1; l<=3; ++l)
-                fPvsE << "# - {name: P" << pcl[j] << k << l << ", datetype: float64, description: " << k << "->" << l << " transition probability\n";
+                fPvsE << "# - {name: P" << pcl[j] << k << l << ", datatype: float64, description: " << k << "->" << l << " transition probability}\n";
 
           // Flavor-mass transitions
           for (int j=0; j<2; ++j)
             for (int k=0; k<=2; ++k)
               for (int l=1; l<=3; ++l)
-                fPvsE << "# - {name: P" << pcl[j] << flavor[k] << l << ", datetype: float64, description: " << flavor[k] << "->" << l << " transition probability\n";
+                fPvsE << "# - {name: P" << pcl[j] << flavor[k] << l << ", datatype: float64, description: " << flavor[k] << "->" << l << " transition probability}\n";
 
           // Flavor-flavor transitions
           for (int j=0; j<2; ++j)
             for (int k=0; k<=2; ++k)
               for (int l=0; l<=2; ++l)
-                fPvsE << "# - {name: P" << pcl[j] << flavor[k] << flavor[l] << ", datetype: float64, description: " << flavor[k] << "->" << flavor[l] << " transition probability\n";
+                fPvsE << "# - {name: P" << pcl[j] << flavor[k] << flavor[l] << ", datatype: float64, description: " << flavor[k] << "->" << flavor[l] << " transition probability}\n";
+
+          // First line: column names
+          fPvsE<<"E";
+
+          fPvsE<<" P11  P12  P13  P21  P22  P23  P31  P32  P33";
+          fPvsE<<" Pbar11  Pbar12  Pbar13  Pbar21  Pbar22  Pbar23  Pbar31  Pbar32  Pbar33";
+
+          fPvsE<<" Pe1  Pe2  Pe3  Pmu1  Pmu2  Pmu3  Ptau1  Ptau2  Ptau3";
+          fPvsE<<" Pbare1  Pbare2  Pbare3  Pbarmu1  Pbarmu2  Pbarmu3  Pbartau1  Pbartau2  Pbartau3";        
+
+          fPvsE<<" Pee  Pemu  Petau  Pmue  Pmumu  Pmutau  Ptaue  Ptaumu  Ptautau";
+          fPvsE<<" Pbaree  Pbaremu  Pbaretau  Pbarmue  Pbarmumu  Pbarmutau  Pbartaue  Pbartaumu  Pbartautau";        
         }
         else {
           fPvsE<<"E [MeV]";
@@ -325,7 +351,7 @@ void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double 
           fPvsE<<"\t Pbaree \t Pbaremu \t Pbaretau \t Pbarmue \t Pbarmumu \t Pbarmutau \t Pbartaue \t Pbartaumu \t Pbartautau";        
         }
 
-        const string delimiter = ecsvformat ? string(",") : string("\t");
+        const string delimiter = ecsvformat ? string(" ") : string("\t");
 
         for(i=0;i<=NE-1;i++)
           { fPvsE << "\n" << E[i]/(mega*cgs::units::eV); 
@@ -385,7 +411,7 @@ void Output_Hvslambda(bool firsttime,bool lasttime,ofstream &fHvslambda,double l
                } 
 
             // **************
-            const string delimiter = ecsvformat ? string(",") : string("\t");
+            const string delimiter = ecsvformat ? string(" ") : string("\t");
          
             if(firsttime==true){
                if (ecsvformat) {
@@ -395,6 +421,7 @@ void Output_Hvslambda(bool firsttime,bool lasttime,ofstream &fHvslambda,double l
                             << "# - {name: rho, unit: g / cm3, datatype: float64, description: density}\n"
                             << "# - {name: Ye, datatype: float64, description: electron fraction}\n"
                             << "# - {name: HMSW_ee, unit: erg, datatype: float64, description: MSW potential}\n";
+                 fHvslambda << "lambda r rho Ye HMSW_ee";
                }
                else {
                  fHvslambda << "lambda [cm] \t r [cm] \t rho [g/cm^3] \t Ye [] \t HMSW_ee [erg]";

@@ -92,8 +92,8 @@ PYBIND11_MODULE(_ext, m)
         .def_readwrite("accuracy", &InputDataBEMEWS::accuracy)
         .def_readwrite("stepcounterlimit", &InputDataBEMEWS::stepcounterlimit)
         .def_readwrite("NE", &InputDataBEMEWS::NE)
-        .def_readwrite("outputflag", &InputDataBEMEWS::outputflag)
         .def_readwrite("ecsvformat", &InputDataBEMEWS::ecsvformat)
+        .def_readwrite("outputflag", &InputDataBEMEWS::outputflag)
         ;
 
     /*class_<vector<vector<vector<vector<double> > > > >("stl_vectorx4")

@@ -57,6 +57,11 @@ if __name__ == "__main__":
     ID.stepcounterlimit = 1
 
 
+    # Test of output in ECSV format
+    ID.ecsvformat = True
+    ID.outputflag = True
+    ID.stepcounterlimit = 100
+
 
     # do the calculation. The return is a four dimensional array of transition probabilities nu_alpha -> nu_i: 
     # index order is matter/antimatter, energy, i, alpha
