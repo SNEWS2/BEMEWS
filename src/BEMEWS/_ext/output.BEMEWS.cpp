@@ -25,14 +25,20 @@ void Initialize_Output(string outputfilenamestem,ofstream &fPvslambda,ofstream &
 
            for(int i=0;i<=NE-1;i++)
               { filename.str("");
-                if(NE>1){ filename << outputfilenamestem << string(":E=") << ((NE-1.-i)*EminMeV+i*EmaxMeV)/(NE-1.) << string("MeV:Pvslambda.dat");}
-                else{ filename << outputfilenamestem << string(":E=") << EminMeV << string("MeV:Pvslambda.dat");}
+                if(NE>1){
+                  filename << outputfilenamestem << string(":E=") << ((NE-1.-i)*EminMeV+i*EmaxMeV)/(NE-1.)
+                           << (ecsvformat ? string("MeV:Pvslambda.ecsv") : string("MeV:Pvslambda.dat"));
+                }
+                else{
+                  filename << outputfilenamestem << string(":E=") << EminMeV
+                           << (ecsvformat ? string("MeV:Pvslambda.ecsv") : string("MeV:Pvslambda.dat"));
+                }
                 fPvslambdafilename[i]=filename.str();
                 fPvslambda.open(fPvslambdafilename[i].c_str()); fPvslambda.close(); // clears the file
-               }
+              }
 
            filename.str("");
-           filename << outputfilenamestem <<string(":Hvslambda.dat");
+           filename << outputfilenamestem << (ecsvformat ? string(":Hvslambda.ecsv") : string(":Hvslambda.dat"));
            fHvslambda.open((filename.str()).c_str());
            fHvslambda.precision(12);
           }
@@ -63,6 +69,8 @@ void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double l
 
         vector<vector<array<double,NF> > > kk(NM,vector<array<double,NF> >(NE));
         vector<vector<array<double,NF> > > dkk(NM,vector<array<double,NF> >(NE));
+
+        const string delimiter = ecsvformat ? string(",") : string("\t");
       
         int i;
         #pragma omp parallel for schedule(static)
@@ -114,45 +122,73 @@ void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double l
              fPvslambda.precision(12);
              
              if(firsttime==true){
-                fPvslambda<<"lambda [cm] \t r [cm]";
-
-                fPvslambda<<"\t P11 \t P12 \t P13 \t P21 \t P22 \t P23 \t P31 \t P32 \t P33";
-                fPvslambda<<"\t Pbar11 \t Pbar12 \t Pbar13 \t Pbar21 \t Pbar22 \t Pbar23 \t Pbar31 \t Pbar32 \t Pbar33";
-
-                fPvslambda<<"\t Pe1 \t Pe2 \t Pe3 \t Pmu1 \t Pmu2 \t Pmu3 \t Ptau1 \t Ptau2 \t Ptau3";
-                fPvslambda<<"\t Pbare1 \t Pbare2 \t Pbare3 \t Pbarmu1 \t Pbarmu2 \t Pbarmu3 \t Pbartau1 \t Pbartau2 \t Pbartau3";
-
-                fPvslambda<<"\t Pee \t Pemu \t Petau \t Pmue \t Pmumu \t Pmutau \t Ptaue \t Ptaumu \t Ptautau";
-                fPvslambda<<"\t Pbaree \t Pbaremu \t Pbaretau \t Pbarmue \t Pbarmumu \t Pbarmutau \t Pbartaue \t Pbartaumu \t Pbartautau";
+               if (ecsvformat) {
+                 fPvslambda << "# %ECSV 1.0\n# ---\n# datatype:\n"
+                      << "# - {name: lambda, unit: cm, datatype: float64, description: path length}\n"
+                      << "# - {name: r, unit: cm, datatype: float64, description: radial distance}\n";
+ 
+                 const char* pcl[2] = { "", "bar" };
+                 const char* flavor[3] = { "e", "mu", "tau" };
+ 
+                 // Mass-mass transitions
+                 for (int j=0; j<2; ++j)
+                   for (int k=1; k<=3; ++k)
+                     for (int l=1; l<=3; ++l)
+                       fPvslambda << "# - {name: P" << pcl[j] << k << l << ", datetype: float64, description: " << k << "->" << l << " transition probability\n";
+ 
+                 // Flavor-mass transitions
+                 for (int j=0; j<2; ++j)
+                   for (int k=0; k<=2; ++k)
+                     for (int l=1; l<=3; ++l)
+                       fPvslambda << "# - {name: P" << pcl[j] << flavor[k] << l << ", datetype: float64, description: " << flavor[k] << "->" << l << " transition probability\n";
+ 
+                 // Flavor-flavor transitions
+                 for (int j=0; j<2; ++j)
+                   for (int k=0; k<=2; ++k)
+                     for (int l=0; l<=2; ++l)
+                       fPvslambda << "# - {name: P" << pcl[j] << flavor[k] << flavor[l] << ", datetype: float64, description: " << flavor[k] << "->" << flavor[l] << " transition probability\n";
+               }
+               else {
+                 fPvslambda<<"lambda [cm] \t r [cm]";
+ 
+                 fPvslambda<<"\t P11 \t P12 \t P13 \t P21 \t P22 \t P23 \t P31 \t P32 \t P33";
+                 fPvslambda<<"\t Pbar11 \t Pbar12 \t Pbar13 \t Pbar21 \t Pbar22 \t Pbar23 \t Pbar31 \t Pbar32 \t Pbar33";
+ 
+                 fPvslambda<<"\t Pe1 \t Pe2 \t Pe3 \t Pmu1 \t Pmu2 \t Pmu3 \t Ptau1 \t Ptau2 \t Ptau3";
+                 fPvslambda<<"\t Pbare1 \t Pbare2 \t Pbare3 \t Pbarmu1 \t Pbarmu2 \t Pbarmu3 \t Pbartau1 \t Pbartau2 \t Pbartau3";
+ 
+                 fPvslambda<<"\t Pee \t Pemu \t Petau \t Pmue \t Pmumu \t Pmutau \t Ptaue \t Ptaumu \t Ptautau";
+                 fPvslambda<<"\t Pbaree \t Pbaremu \t Pbaretau \t Pbarmue \t Pbarmumu \t Pbarmutau \t Pbartaue \t Pbartaumu \t Pbartautau";
                }             
+             }
 
-             if(firsttime==true){ fPvslambda<<"\n"<<lambdamin0<<"\t"<<r;}
-             if(lasttime==true){ fPvslambda<<"\n"<<lambdamax0<<"\t"<<r;}
-             if(firsttime==false && lasttime==false){ fPvslambda<<"\n"<<lambda<<"\t"<<r;}
+             if(firsttime==true){ fPvslambda << "\n" << lambdamin0 << delimiter << r;}
+             if(lasttime==true){ fPvslambda << "\n" << lambdamax0 << delimiter << r;}
+             if(firsttime==false && lasttime==false){ fPvslambda << "\n" << lambda << delimiter << r;}
 
-             fPvslambda<<"\t"<<norm(Sm[nu][i][0][0])<<"\t"<<norm(Sm[nu][i][0][1])<<"\t"<<norm(Sm[nu][i][0][2]);
-             fPvslambda<<"\t"<<norm(Sm[nu][i][1][0])<<"\t"<<norm(Sm[nu][i][1][1])<<"\t"<<norm(Sm[nu][i][1][2]);
-             fPvslambda<<"\t"<<norm(Sm[nu][i][2][0])<<"\t"<<norm(Sm[nu][i][2][1])<<"\t"<<norm(Sm[nu][i][2][2]);
+             fPvslambda << delimiter << norm(Sm[nu][i][0][0]) << delimiter << norm(Sm[nu][i][0][1]) << delimiter << norm(Sm[nu][i][0][2]);
+             fPvslambda << delimiter << norm(Sm[nu][i][1][0]) << delimiter << norm(Sm[nu][i][1][1]) << delimiter << norm(Sm[nu][i][1][2]);
+             fPvslambda << delimiter << norm(Sm[nu][i][2][0]) << delimiter << norm(Sm[nu][i][2][1]) << delimiter << norm(Sm[nu][i][2][2]);
 
-             fPvslambda<<"\t"<<norm(Sm[antinu][i][0][0])<<"\t"<<norm(Sm[antinu][i][0][1])<<"\t"<<norm(Sm[antinu][i][0][2]);
-             fPvslambda<<"\t"<<norm(Sm[antinu][i][1][0])<<"\t"<<norm(Sm[antinu][i][1][1])<<"\t"<<norm(Sm[antinu][i][1][2]);
-             fPvslambda<<"\t"<<norm(Sm[antinu][i][2][0])<<"\t"<<norm(Sm[antinu][i][2][1])<<"\t"<<norm(Sm[antinu][i][2][2]);
+             fPvslambda << delimiter << norm(Sm[antinu][i][0][0]) << delimiter << norm(Sm[antinu][i][0][1]) << delimiter << norm(Sm[antinu][i][0][2]);
+             fPvslambda << delimiter << norm(Sm[antinu][i][1][0]) << delimiter << norm(Sm[antinu][i][1][1]) << delimiter << norm(Sm[antinu][i][1][2]);
+             fPvslambda << delimiter << norm(Sm[antinu][i][2][0]) << delimiter << norm(Sm[antinu][i][2][1]) << delimiter << norm(Sm[antinu][i][2][2]);
 
-             fPvslambda<<"\t"<<norm(Sfm[nu][i][e][0])<<"\t"<<norm(Sfm[nu][i][e][1])<<"\t"<<norm(Sfm[nu][i][e][2]);
-             fPvslambda<<"\t"<<norm(Sfm[nu][i][mu][0])<<"\t"<<norm(Sfm[nu][i][mu][1])<<"\t"<<norm(Sfm[nu][i][mu][2]);
-             fPvslambda<<"\t"<<norm(Sfm[nu][i][tau][0])<<"\t"<<norm(Sfm[nu][i][tau][1])<<"\t"<<norm(Sfm[nu][i][tau][2]);
+             fPvslambda << delimiter << norm(Sfm[nu][i][e][0]) << delimiter << norm(Sfm[nu][i][e][1]) << delimiter << norm(Sfm[nu][i][e][2]);
+             fPvslambda << delimiter << norm(Sfm[nu][i][mu][0]) << delimiter << norm(Sfm[nu][i][mu][1]) << delimiter << norm(Sfm[nu][i][mu][2]);
+             fPvslambda << delimiter << norm(Sfm[nu][i][tau][0]) << delimiter << norm(Sfm[nu][i][tau][1]) << delimiter << norm(Sfm[nu][i][tau][2]);
 
-             fPvslambda<<"\t"<<norm(Sfm[antinu][i][e][0])<<"\t"<<norm(Sfm[antinu][i][e][1])<<"\t"<<norm(Sfm[antinu][i][e][2]);
-             fPvslambda<<"\t"<<norm(Sfm[antinu][i][mu][0])<<"\t"<<norm(Sfm[antinu][i][mu][1])<<"\t"<<norm(Sfm[antinu][i][mu][2]);
-             fPvslambda<<"\t"<<norm(Sfm[antinu][i][tau][0])<<"\t"<<norm(Sfm[antinu][i][tau][1])<<"\t"<<norm(Sfm[antinu][i][tau][2]);
+             fPvslambda << delimiter << norm(Sfm[antinu][i][e][0]) << delimiter << norm(Sfm[antinu][i][e][1]) << delimiter << norm(Sfm[antinu][i][e][2]);
+             fPvslambda << delimiter << norm(Sfm[antinu][i][mu][0]) << delimiter << norm(Sfm[antinu][i][mu][1]) << delimiter << norm(Sfm[antinu][i][mu][2]);
+             fPvslambda << delimiter << norm(Sfm[antinu][i][tau][0]) << delimiter << norm(Sfm[antinu][i][tau][1]) << delimiter << norm(Sfm[antinu][i][tau][2]);
 
-             fPvslambda<<"\t"<<norm(Sf[nu][i][e][e])<<"\t"<<norm(Sf[nu][i][e][mu])<<"\t"<<norm(Sf[nu][i][e][tau]);
-             fPvslambda<<"\t"<<norm(Sf[nu][i][mu][e])<<"\t"<<norm(Sf[nu][i][mu][mu])<<"\t"<<norm(Sf[nu][i][mu][tau]);
-             fPvslambda<<"\t"<<norm(Sf[nu][i][tau][e])<<"\t"<<norm(Sf[nu][i][tau][mu])<<"\t"<<norm(Sf[nu][i][tau][tau]);
+             fPvslambda << delimiter << norm(Sf[nu][i][e][e]) << delimiter << norm(Sf[nu][i][e][mu]) << delimiter << norm(Sf[nu][i][e][tau]);
+             fPvslambda << delimiter << norm(Sf[nu][i][mu][e]) << delimiter << norm(Sf[nu][i][mu][mu]) << delimiter << norm(Sf[nu][i][mu][tau]);
+             fPvslambda << delimiter << norm(Sf[nu][i][tau][e]) << delimiter << norm(Sf[nu][i][tau][mu]) << delimiter << norm(Sf[nu][i][tau][tau]);
 
-             fPvslambda<<"\t"<<norm(Sf[antinu][i][e][e])<<"\t"<<norm(Sf[antinu][i][e][mu])<<"\t"<<norm(Sf[antinu][i][e][tau]);
-             fPvslambda<<"\t"<<norm(Sf[antinu][i][mu][e])<<"\t"<<norm(Sf[antinu][i][mu][mu])<<"\t"<<norm(Sf[antinu][i][mu][tau]);
-             fPvslambda<<"\t"<<norm(Sf[antinu][i][tau][e])<<"\t"<<norm(Sf[antinu][i][tau][mu])<<"\t"<<norm(Sf[antinu][i][tau][tau]);
+             fPvslambda << delimiter << norm(Sf[antinu][i][e][e]) << delimiter << norm(Sf[antinu][i][e][mu]) << delimiter << norm(Sf[antinu][i][e][tau]);
+             fPvslambda << delimiter << norm(Sf[antinu][i][mu][e]) << delimiter << norm(Sf[antinu][i][mu][mu]) << delimiter << norm(Sf[antinu][i][mu][tau]);
+             fPvslambda << delimiter << norm(Sf[antinu][i][tau][e]) << delimiter << norm(Sf[antinu][i][tau][mu]) << delimiter << norm(Sf[antinu][i][tau][tau]);
 
              fPvslambda.flush();
              fPvslambda.close();
@@ -162,11 +198,21 @@ void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double l
 // ************************************************************************
 
 void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative, bool ecsvformat)
-      { string cmdotdat("cm.dat");
+      { string cmdotdat = ecsvformat ? string("cm.ecsv") : string("cm.dat");
         stringstream filename;
 
-        if(lasttime==false){ filename.str(""); filename<<outputfilenamestem<<string(":PvsE:lambda=")<<lambda<<cmdotdat; fPvsE.open((filename.str()).c_str()); fPvsE.precision(12);}
-        else{ filename.str(""); filename<<outputfilenamestem<<string(":PvsE:lambda=")<<lambdamax0<<cmdotdat; fPvsE.open((filename.str()).c_str()); fPvsE.precision(12);}        
+        if(lasttime==false){
+          filename.str("");
+          filename<<outputfilenamestem<<string(":PvsE:lambda=")<<lambda<<cmdotdat;
+          fPvsE.open((filename.str()).c_str());
+          fPvsE.precision(12);
+        }
+        else{
+          filename.str("");
+          filename<<outputfilenamestem<<string(":PvsE:lambda=")<<lambdamax0<<cmdotdat;
+          fPvsE.open((filename.str()).c_str());
+          fPvsE.precision(12);
+        }
 
         double r, rrho, YYe;
 
@@ -241,47 +287,76 @@ void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double 
         
         // *******
 
-        fPvsE<<"E [MeV]";
+        if (ecsvformat) {
+          fPvsE << "# %ECSV 1.0\n# ---\n# datatype:\n"
+                << "# - {name: E, unit: MeV, datatype: float64, description: neutrino energy}\n";
 
-        fPvsE<<"\t P11 \t P12 \t P13 \t P21 \t P22 \t P23 \t P31 \t P32 \t P33";
-        fPvsE<<"\t Pbar11 \t Pbar12 \t Pbar13 \t Pbar21 \t Pbar22 \t Pbar23 \t Pbar31 \t Pbar32 \t Pbar33";
+          const char* pcl[2] = { "", "bar" };
+          const char* flavor[3] = { "e", "mu", "tau" };
 
-        fPvsE<<"\t Pe1 \t Pe2 \t Pe3 \t Pmu1 \t Pmu2 \t Pmu3 \t Ptau1 \t Ptau2 \t Ptau3";
-        fPvsE<<"\t Pbare1 \t Pbare2 \t Pbare3 \t Pbarmu1 \t Pbarmu2 \t Pbarmu3 \t Pbartau1 \t Pbartau2 \t Pbartau3";        
+          // Mass-mass transitions
+          for (int j=0; j<2; ++j)
+            for (int k=1; k<=3; ++k)
+              for (int l=1; l<=3; ++l)
+                fPvsE << "# - {name: P" << pcl[j] << k << l << ", datetype: float64, description: " << k << "->" << l << " transition probability\n";
 
-        fPvsE<<"\t Pee \t Pemu \t Petau \t Pmue \t Pmumu \t Pmutau \t Ptaue \t Ptaumu \t Ptautau";
-        fPvsE<<"\t Pbaree \t Pbaremu \t Pbaretau \t Pbarmue \t Pbarmumu \t Pbarmutau \t Pbartaue \t Pbartaumu \t Pbartautau";        
+          // Flavor-mass transitions
+          for (int j=0; j<2; ++j)
+            for (int k=0; k<=2; ++k)
+              for (int l=1; l<=3; ++l)
+                fPvsE << "# - {name: P" << pcl[j] << flavor[k] << l << ", datetype: float64, description: " << flavor[k] << "->" << l << " transition probability\n";
+
+          // Flavor-flavor transitions
+          for (int j=0; j<2; ++j)
+            for (int k=0; k<=2; ++k)
+              for (int l=0; l<=2; ++l)
+                fPvsE << "# - {name: P" << pcl[j] << flavor[k] << flavor[l] << ", datetype: float64, description: " << flavor[k] << "->" << flavor[l] << " transition probability\n";
+        }
+        else {
+          fPvsE<<"E [MeV]";
+
+          fPvsE<<"\t P11 \t P12 \t P13 \t P21 \t P22 \t P23 \t P31 \t P32 \t P33";
+          fPvsE<<"\t Pbar11 \t Pbar12 \t Pbar13 \t Pbar21 \t Pbar22 \t Pbar23 \t Pbar31 \t Pbar32 \t Pbar33";
+
+          fPvsE<<"\t Pe1 \t Pe2 \t Pe3 \t Pmu1 \t Pmu2 \t Pmu3 \t Ptau1 \t Ptau2 \t Ptau3";
+          fPvsE<<"\t Pbare1 \t Pbare2 \t Pbare3 \t Pbarmu1 \t Pbarmu2 \t Pbarmu3 \t Pbartau1 \t Pbartau2 \t Pbartau3";        
+
+          fPvsE<<"\t Pee \t Pemu \t Petau \t Pmue \t Pmumu \t Pmutau \t Ptaue \t Ptaumu \t Ptautau";
+          fPvsE<<"\t Pbaree \t Pbaremu \t Pbaretau \t Pbarmue \t Pbarmumu \t Pbarmutau \t Pbartaue \t Pbartaumu \t Pbartautau";        
+        }
+
+        const string delimiter = ecsvformat ? string(",") : string("\t");
 
         for(i=0;i<=NE-1;i++)
-           { fPvsE<<"\n"<<E[i]/(mega*cgs::units::eV); 
+          { fPvsE << "\n" << E[i]/(mega*cgs::units::eV); 
 
-             fPvsE<<"\t"<<norm(Sm[nu][i][0][0])<<"\t"<<norm(Sm[nu][i][0][1])<<"\t"<<norm(Sm[nu][i][0][2]);
-             fPvsE<<"\t"<<norm(Sm[nu][i][1][0])<<"\t"<<norm(Sm[nu][i][1][1])<<"\t"<<norm(Sm[nu][i][1][2]);
-             fPvsE<<"\t"<<norm(Sm[nu][i][2][0])<<"\t"<<norm(Sm[nu][i][2][1])<<"\t"<<norm(Sm[nu][i][2][2]);
+            fPvsE << delimiter << norm(Sm[nu][i][0][0]) << delimiter << norm(Sm[nu][i][0][1]) << delimiter << norm(Sm[nu][i][0][2]);
+            fPvsE << delimiter << norm(Sm[nu][i][1][0]) << delimiter << norm(Sm[nu][i][1][1]) << delimiter << norm(Sm[nu][i][1][2]);
+            fPvsE << delimiter << norm(Sm[nu][i][2][0]) << delimiter << norm(Sm[nu][i][2][1]) << delimiter << norm(Sm[nu][i][2][2]);
 
-             fPvsE<<"\t"<<norm(Sm[antinu][i][0][0])<<"\t"<<norm(Sm[antinu][i][0][1])<<"\t"<<norm(Sm[antinu][i][0][2]);
-             fPvsE<<"\t"<<norm(Sm[antinu][i][1][0])<<"\t"<<norm(Sm[antinu][i][1][1])<<"\t"<<norm(Sm[antinu][i][1][2]);
-             fPvsE<<"\t"<<norm(Sm[antinu][i][2][0])<<"\t"<<norm(Sm[antinu][i][2][1])<<"\t"<<norm(Sm[antinu][i][2][2]);
+            fPvsE << delimiter << norm(Sm[antinu][i][0][0]) << delimiter << norm(Sm[antinu][i][0][1]) << delimiter << norm(Sm[antinu][i][0][2]);
+            fPvsE << delimiter << norm(Sm[antinu][i][1][0]) << delimiter << norm(Sm[antinu][i][1][1]) << delimiter << norm(Sm[antinu][i][1][2]);
+            fPvsE << delimiter << norm(Sm[antinu][i][2][0]) << delimiter << norm(Sm[antinu][i][2][1]) << delimiter << norm(Sm[antinu][i][2][2]);
 
-             fPvsE<<"\t"<<norm(Sfm[nu][i][e][0])<<"\t"<<norm(Sfm[nu][i][e][1])<<"\t"<<norm(Sfm[nu][i][e][2]);
-             fPvsE<<"\t"<<norm(Sfm[nu][i][mu][0])<<"\t"<<norm(Sfm[nu][i][mu][1])<<"\t"<<norm(Sfm[nu][i][mu][2]);
-             fPvsE<<"\t"<<norm(Sfm[nu][i][tau][0])<<"\t"<<norm(Sfm[nu][i][tau][1])<<"\t"<<norm(Sfm[nu][i][tau][2]);
+            fPvsE << delimiter << norm(Sfm[nu][i][e][0]) << delimiter << norm(Sfm[nu][i][e][1]) << delimiter << norm(Sfm[nu][i][e][2]);
+            fPvsE << delimiter << norm(Sfm[nu][i][mu][0]) << delimiter << norm(Sfm[nu][i][mu][1]) << delimiter << norm(Sfm[nu][i][mu][2]);
+            fPvsE << delimiter << norm(Sfm[nu][i][tau][0]) << delimiter << norm(Sfm[nu][i][tau][1]) << delimiter << norm(Sfm[nu][i][tau][2]);
 
-             fPvsE<<"\t"<<norm(Sfm[antinu][i][e][0])<<"\t"<<norm(Sfm[antinu][i][e][1])<<"\t"<<norm(Sfm[antinu][i][e][2]);
-             fPvsE<<"\t"<<norm(Sfm[antinu][i][mu][0])<<"\t"<<norm(Sfm[antinu][i][mu][1])<<"\t"<<norm(Sfm[antinu][i][mu][2]);
-             fPvsE<<"\t"<<norm(Sfm[antinu][i][tau][0])<<"\t"<<norm(Sfm[antinu][i][tau][1])<<"\t"<<norm(Sfm[antinu][i][tau][2]);
+            fPvsE << delimiter << norm(Sfm[antinu][i][e][0]) << delimiter << norm(Sfm[antinu][i][e][1]) << delimiter << norm(Sfm[antinu][i][e][2]);
+            fPvsE << delimiter << norm(Sfm[antinu][i][mu][0]) << delimiter << norm(Sfm[antinu][i][mu][1]) << delimiter << norm(Sfm[antinu][i][mu][2]);
+            fPvsE << delimiter << norm(Sfm[antinu][i][tau][0]) << delimiter << norm(Sfm[antinu][i][tau][1]) << delimiter << norm(Sfm[antinu][i][tau][2]);
 
-             fPvsE<<"\t"<<norm(Sf[nu][i][e][e])<<"\t"<<norm(Sf[nu][i][e][mu])<<"\t"<<norm(Sf[nu][i][e][tau]);
-             fPvsE<<"\t"<<norm(Sf[nu][i][mu][e])<<"\t"<<norm(Sf[nu][i][mu][mu])<<"\t"<<norm(Sf[nu][i][mu][tau]);
-             fPvsE<<"\t"<<norm(Sf[nu][i][tau][e])<<"\t"<<norm(Sf[nu][i][tau][mu])<<"\t"<<norm(Sf[nu][i][tau][tau]);
+            fPvsE << delimiter << norm(Sf[nu][i][e][e]) << delimiter << norm(Sf[nu][i][e][mu]) << delimiter << norm(Sf[nu][i][e][tau]);
+            fPvsE << delimiter << norm(Sf[nu][i][mu][e]) << delimiter << norm(Sf[nu][i][mu][mu]) << delimiter << norm(Sf[nu][i][mu][tau]);
+            fPvsE << delimiter << norm(Sf[nu][i][tau][e]) << delimiter << norm(Sf[nu][i][tau][mu]) << delimiter << norm(Sf[nu][i][tau][tau]);
 
-             fPvsE<<"\t"<<norm(Sf[antinu][i][e][e])<<"\t"<<norm(Sf[antinu][i][e][mu])<<"\t"<<norm(Sf[antinu][i][e][tau]);
-             fPvsE<<"\t"<<norm(Sf[antinu][i][mu][e])<<"\t"<<norm(Sf[antinu][i][mu][mu])<<"\t"<<norm(Sf[antinu][i][mu][tau]);
-             fPvsE<<"\t"<<norm(Sf[antinu][i][tau][e])<<"\t"<<norm(Sf[antinu][i][tau][mu])<<"\t"<<norm(Sf[antinu][i][tau][tau]);
-            }
+            fPvsE << delimiter << norm(Sf[antinu][i][e][e]) << delimiter << norm(Sf[antinu][i][e][mu]) << delimiter << norm(Sf[antinu][i][e][tau]);
+            fPvsE << delimiter << norm(Sf[antinu][i][mu][e]) << delimiter << norm(Sf[antinu][i][mu][mu]) << delimiter << norm(Sf[antinu][i][mu][tau]);
+            fPvsE << delimiter << norm(Sf[antinu][i][tau][e]) << delimiter << norm(Sf[antinu][i][tau][mu]) << delimiter << norm(Sf[antinu][i][tau][tau]);
+          }
 
-         fPvsE.flush();
-         fPvsE.close();
+          fPvsE.flush();
+          fPvsE.close();
         }
 
 // ************************************************************************
@@ -310,16 +385,27 @@ void Output_Hvslambda(bool firsttime,bool lasttime,ofstream &fHvslambda,double l
                } 
 
             // **************
+            const string delimiter = ecsvformat ? string(",") : string("\t");
          
             if(firsttime==true){
-               fHvslambda<<"lambda [cm] \t r [cm] \t rho [g/cm^3] \t Ye [] \t HMSW_ee [erg]";
-              }         
+               if (ecsvformat) {
+                 fHvslambda << "# %ECSV 1.0\n# ---\n# datatype:\n"
+                            << "# - {name: lambda, unit: cm, datatype: float64, description: path length}\n"
+                            << "# - {name: r, unit: cm, datatype: float64, description: radial distance}\n"
+                            << "# - {name: rho, unit: g / cm3, datatype: float64, description: density}\n"
+                            << "# - {name: Ye, datatype: float64, description: electron fraction}\n"
+                            << "# - {name: HMSW_ee, unit: erg, datatype: float64, description: MSW potential}\n";
+               }
+               else {
+                 fHvslambda << "lambda [cm] \t r [cm] \t rho [g/cm^3] \t Ye [] \t HMSW_ee [erg]";
+               }
+             }         
 
-            if(firsttime==true){ fHvslambda<<"\n"<<lambdamin0;}
-            if(lasttime==true){ fHvslambda<<"\n"<<lambdamax0;}            
-            if(firsttime==false && lasttime==false){ fHvslambda<<"\n"<<lambda;}            
+            if(firsttime==true){ fHvslambda << "\n" << lambdamin0;}
+            if(lasttime==true){ fHvslambda << "\n" << lambdamax0;}            
+            if(firsttime==false && lasttime==false){ fHvslambda << "\n" << lambda;}            
             
-            fHvslambda<<"\t"<<r<<"\t"<<rrho<<"\t"<<YYe<<"\t"<<real(VfMSW[e][e]);
+            fHvslambda << delimiter << r << delimiter << rrho << delimiter << YYe << delimiter << real(VfMSW[e][e]);
 
             fHvslambda.flush();
            }
