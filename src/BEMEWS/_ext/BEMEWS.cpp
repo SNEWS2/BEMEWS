@@ -93,6 +93,7 @@ PYBIND11_MODULE(_ext, m)
         .def_readwrite("stepcounterlimit", &InputDataBEMEWS::stepcounterlimit)
         .def_readwrite("NE", &InputDataBEMEWS::NE)
         .def_readwrite("outputflag", &InputDataBEMEWS::outputflag)
+        .def_readwrite("ecsvformat", &InputDataBEMEWS::ecsvformat)
         ;
 
     /*class_<vector<vector<vector<vector<double> > > > >("stl_vectorx4")
@@ -162,7 +163,7 @@ vector<vector<vector<vector<double> > > > Run(InputDataBEMEWS ID)
            ofstream fHvslambda;               // a file for anything else
            ofstream fSvsE;               
 
-           if(ID.outputflag==true){ Initialize_Output(outputfilenamestem,fPvslambda,fHvslambda);}
+           if(ID.outputflag==true){ Initialize_Output(outputfilenamestem,fPvslambda,fHvslambda,ID.ecsvformat);}
 
            // *****************************************************
            // *****************************************************
@@ -330,14 +331,14 @@ vector<vector<vector<vector<double> > > > Run(InputDataBEMEWS ID)
                 if(ID.outputflag==true){ output=true;}
                 if(output==true){ 
                     if(firsttime==true){                 
-                       Output_Pvslambda(firsttime,lasttime,fPvslambda,lambdamin,Y,Scumulative);
-                       Output_Hvslambda(firsttime,lasttime,fHvslambda,lambdamin,Y,Scumulative);
+                       Output_Pvslambda(firsttime,lasttime,fPvslambda,lambdamin,Y,Scumulative,ID.ecsvformat);
+                       Output_Hvslambda(firsttime,lasttime,fHvslambda,lambdamin,Y,Scumulative,ID.ecsvformat);
                       }                                        
                       
                     firsttime = false;                                                                   
 
-                    Output_Pvslambda(firsttime,lasttime,fPvslambda,lambdamin,Y,Scumulative);
-                    Output_Hvslambda(firsttime,lasttime,fHvslambda,lambdamin,Y,Scumulative);
+                    Output_Pvslambda(firsttime,lasttime,fPvslambda,lambdamin,Y,Scumulative,ID.ecsvformat);
+                    Output_Hvslambda(firsttime,lasttime,fHvslambda,lambdamin,Y,Scumulative,ID.ecsvformat);
                     
                     output = false;                    
                    } 
@@ -454,9 +455,9 @@ vector<vector<vector<vector<double> > > > Run(InputDataBEMEWS ID)
                     if(output==true)
                       { cout<<"\nOutput at\t"<<lambda<<flush;
                       
-                        Output_Pvslambda(firsttime,lasttime,fPvslambda,lambda,Y,Scumulative);
-                        Output_Hvslambda(firsttime,lasttime,fHvslambda,lambda,Y,Scumulative);
-                        //Output_PvsE(lasttime,fPvsE,outputfilenamestem,lambda,Y,Scumulative);
+                        Output_Pvslambda(firsttime,lasttime,fPvslambda,lambda,Y,Scumulative,ID.ecsvformat);
+                        Output_Hvslambda(firsttime,lasttime,fHvslambda,lambda,Y,Scumulative,ID.ecsvformat);
+                        //Output_PvsE(lasttime,fPvsE,outputfilenamestem,lambda,Y,Scumulative,ID.ecsvformat);
                         
                         output=false;
                        }
@@ -477,14 +478,14 @@ vector<vector<vector<vector<double> > > > Run(InputDataBEMEWS ID)
                 else{ // output at the end of the code
                       if(ID.outputflag==true){ output = true;}
                       if(output==true){ 
-                          Output_Pvslambda(firsttime,lasttime,fPvslambda,lambdamax,Y,Scumulative);
-                          Output_Hvslambda(firsttime,lasttime,fHvslambda,lambdamax,Y,Scumulative);                          
+                          Output_Pvslambda(firsttime,lasttime,fPvslambda,lambdamax,Y,Scumulative,ID.ecsvformat);
+                          Output_Hvslambda(firsttime,lasttime,fHvslambda,lambdamax,Y,Scumulative,ID.ecsvformat);
                           
                           lasttime = true;                          
                           
-                          Output_Pvslambda(firsttime,lasttime,fPvslambda,lambdamax,Y,Scumulative);
-                          Output_Hvslambda(firsttime,lasttime,fHvslambda,lambdamax,Y,Scumulative);                          
-                          Output_PvsE(lasttime,fPvsE,outputfilenamestem,lambdamax,Y,Scumulative);                          
+                          Output_Pvslambda(firsttime,lasttime,fPvslambda,lambdamax,Y,Scumulative,ID.ecsvformat);
+                          Output_Hvslambda(firsttime,lasttime,fHvslambda,lambdamax,Y,Scumulative,ID.ecsvformat);
+                          Output_PvsE(lasttime,fPvsE,outputfilenamestem,lambdamax,Y,Scumulative,ID.ecsvformat);
                           
                           output = false;
                          }
