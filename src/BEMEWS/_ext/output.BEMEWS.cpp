@@ -18,7 +18,7 @@ using namespace prefixes;
 
 std::vector<std::string> fPvslambdafilename;
 
-void Initialize_Output(string outputfilenamestem,ofstream &fPvslambda,ofstream &fHvslambda, bool ecsvformat)
+void Initialize_Output(string outputfilenamestem,ofstream &fPvslambda,ofstream &fHvslambda, const InputDataBEMEWS &id)
          { stringstream filename; 
 
            fPvslambdafilename=vector<string>(NE);
@@ -27,18 +27,18 @@ void Initialize_Output(string outputfilenamestem,ofstream &fPvslambda,ofstream &
               { filename.str("");
                 if(NE>1){
                   filename << outputfilenamestem << string(":E=") << ((NE-1.-i)*EminMeV+i*EmaxMeV)/(NE-1.)
-                           << (ecsvformat ? string("MeV:Pvslambda.ecsv") : string("MeV:Pvslambda.dat"));
+                           << (id.ecsvformat ? string("MeV:Pvslambda.ecsv") : string("MeV:Pvslambda.dat"));
                 }
                 else{
                   filename << outputfilenamestem << string(":E=") << EminMeV
-                           << (ecsvformat ? string("MeV:Pvslambda.ecsv") : string("MeV:Pvslambda.dat"));
+                           << (id.ecsvformat ? string("MeV:Pvslambda.ecsv") : string("MeV:Pvslambda.dat"));
                 }
                 fPvslambdafilename[i]=filename.str();
                 fPvslambda.open(fPvslambdafilename[i].c_str()); fPvslambda.close(); // clears the file
               }
 
            filename.str("");
-           filename << outputfilenamestem << (ecsvformat ? string(":Hvslambda.ecsv") : string(":Hvslambda.dat"));
+           filename << outputfilenamestem << (id.ecsvformat ? string(":Hvslambda.ecsv") : string(":Hvslambda.dat"));
            fHvslambda.open((filename.str()).c_str());
            fHvslambda.precision(12);
           }
@@ -50,7 +50,7 @@ void Close_Output(ofstream &fHvslambda)
 
 // ******************************************************
 
-void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative, bool ecsvformat)
+void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative, const InputDataBEMEWS &id)
       { array<MATRIX<complex<double>,NF,NF>,NM> VfMSW, dVfMSWdlambda;
 
         double r = sqrt( RE*RE + lambda*lambda - 2.*RE*lambda*sin(-altitude) );
@@ -70,7 +70,7 @@ void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double l
         vector<vector<array<double,NF> > > kk(NM,vector<array<double,NF> >(NE));
         vector<vector<array<double,NF> > > dkk(NM,vector<array<double,NF> >(NE));
 
-        const string delimiter = ecsvformat ? string(" ") : string("\t");
+        const string delimiter = id.ecsvformat ? string(" ") : string("\t");
       
         int i;
         #pragma omp parallel for schedule(static)
@@ -122,7 +122,7 @@ void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double l
              fPvslambda.precision(12);
              
              if(firsttime==true){
-               if (ecsvformat) {
+               if (id.ecsvformat) {
                  // ECSV YAML header
                  fPvslambda << "# %ECSV 1.0\n# ---\n# datatype:\n"
                       << "# - {name: lambda, unit: cm, datatype: float64, description: path length}\n"
@@ -148,6 +148,21 @@ void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double l
                    for (int k=0; k<=2; ++k)
                      for (int l=0; l<=2; ++l)
                        fPvslambda << "# - {name: P" << pcl[j] << flavor[k] << flavor[l] << ", datatype: float64, description: " << flavor[k] << "->" << flavor[l] << " transition probability}\n";
+
+                 // Simulation settings metadata
+                 fPvslambda << "# meta: !!omap\n"
+                            << "# - settings:\n"
+                            << "#   - {Ebins: " << id.NE << ", description: number of energy bins}\n"
+                            << "#   - {Emin: " << id.Emin << ", unit: MeV, description: minimum energy}\n"
+                            << "#   - {Emax: " << id.Emax << ", unit: MeV, description: maximum energy}\n"
+                            << "#   - {deltam_21: " << id.deltam_21 << ", unit: eV2, description: 2->1 mass splitting}\n"
+                            << "#   - {deltam_32: " << id.deltam_32 << ", unit: eV2, description: 3->2 mass splitting}\n"
+                            << "#   - {theta_12: " << id.theta12 << ", unit: deg, description: 1->2 mixing angle}\n"
+                            << "#   - {theta_13: " << id.theta13 << ", unit: deg, description: 1->3 mixing angle}\n"
+                            << "#   - {theta_23: " << id.theta23 << ", unit: deg, description: 2->3 mixing angle}\n"
+                            << "#   - {delta_CP: " << id.deltaCP << ", unit: deg, description: CP violating phase}\n"
+                            << "#   - {accuracy: " << id.accuracy << ", description: accuracy of Runge-Kutta solver}\n"
+                            << "#   - {stepcounterlimit: " << id.stepcounterlimit << ", description: output data every N steps}\n";
 
                  // First-line column names
                  fPvslambda<<"lambda r";
@@ -210,8 +225,8 @@ void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double l
 
 // ************************************************************************
 
-void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative, bool ecsvformat)
-      { string cmdotdat = ecsvformat ? string("cm.ecsv") : string("cm.dat");
+void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative, const InputDataBEMEWS &id)
+      { string cmdotdat = id.ecsvformat ? string("cm.ecsv") : string("cm.dat");
         stringstream filename;
 
         if(lasttime==false){
@@ -300,7 +315,7 @@ void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double 
         
         // *******
 
-        if (ecsvformat) {
+        if (id.ecsvformat) {
           // ECSV YAML header
           fPvsE << "# %ECSV 1.0\n# ---\n# datatype:\n"
                 << "# - {name: E, unit: MeV, datatype: float64, description: neutrino energy}\n";
@@ -325,6 +340,21 @@ void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double 
             for (int k=0; k<=2; ++k)
               for (int l=0; l<=2; ++l)
                 fPvsE << "# - {name: P" << pcl[j] << flavor[k] << flavor[l] << ", datatype: float64, description: " << flavor[k] << "->" << flavor[l] << " transition probability}\n";
+
+          // Simulation settings metadata
+          fPvsE << "# meta: !!omap\n"
+                << "# - settings:\n"
+                << "#   - {Ebins: " << id.NE << ", description: number of energy bins}\n"
+                << "#   - {Emin: " << id.Emin << ", unit: MeV, description: minimum energy}\n"
+                << "#   - {Emax: " << id.Emax << ", unit: MeV, description: maximum energy}\n"
+                << "#   - {deltam_21: " << id.deltam_21 << ", unit: eV2, description: 2->1 mass splitting}\n"
+                << "#   - {deltam_32: " << id.deltam_32 << ", unit: eV2, description: 3->2 mass splitting}\n"
+                << "#   - {theta_12: " << id.theta12 << ", unit: deg, description: 1->2 mixing angle}\n"
+                << "#   - {theta_13: " << id.theta13 << ", unit: deg, description: 1->3 mixing angle}\n"
+                << "#   - {theta_23: " << id.theta23 << ", unit: deg, description: 2->3 mixing angle}\n"
+                << "#   - {delta_CP: " << id.deltaCP << ", unit: deg, description: CP violating phase}\n"
+                << "#   - {accuracy: " << id.accuracy << ", description: accuracy of Runge-Kutta solver}\n"
+                << "#   - {stepcounterlimit: " << id.stepcounterlimit << ", description: output data every N steps}\n";
 
           // First line: column names
           fPvsE<<"E";
@@ -351,7 +381,7 @@ void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double 
           fPvsE<<"\t Pbaree \t Pbaremu \t Pbaretau \t Pbarmue \t Pbarmumu \t Pbarmutau \t Pbartaue \t Pbartaumu \t Pbartautau";        
         }
 
-        const string delimiter = ecsvformat ? string(" ") : string("\t");
+        const string delimiter = id.ecsvformat ? string(" ") : string("\t");
 
         for(i=0;i<=NE-1;i++)
           { fPvsE << "\n" << E[i]/(mega*cgs::units::eV); 
@@ -387,7 +417,7 @@ void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double 
 
 // ************************************************************************
 
-void Output_Hvslambda(bool firsttime,bool lasttime,ofstream &fHvslambda,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative, bool ecsvformat)
+void Output_Hvslambda(bool firsttime,bool lasttime,ofstream &fHvslambda,double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRIX<complex<double>,NF,NF> > > &Scumulative, const InputDataBEMEWS &id)
           { MATRIX<complex<double>,NF,NF> VfMSW,VfMSWbar;
             double r, rrho, YYe;
 
@@ -411,16 +441,34 @@ void Output_Hvslambda(bool firsttime,bool lasttime,ofstream &fHvslambda,double l
                } 
 
             // **************
-            const string delimiter = ecsvformat ? string(" ") : string("\t");
+            const string delimiter = id.ecsvformat ? string(" ") : string("\t");
          
             if(firsttime==true){
-               if (ecsvformat) {
+               if (id.ecsvformat) {
+                 // YAML header with datatypes
                  fHvslambda << "# %ECSV 1.0\n# ---\n# datatype:\n"
                             << "# - {name: lambda, unit: cm, datatype: float64, description: path length}\n"
                             << "# - {name: r, unit: cm, datatype: float64, description: radial distance}\n"
                             << "# - {name: rho, unit: g / cm3, datatype: float64, description: density}\n"
                             << "# - {name: Ye, datatype: float64, description: electron fraction}\n"
                             << "# - {name: HMSW_ee, unit: erg, datatype: float64, description: MSW potential}\n";
+
+                 // Simulation settings metadata
+                 fHvslambda << "# meta: !!omap\n"
+                            << "# - settings:\n"
+                            << "#   - {Ebins: " << id.NE << ", description: number of energy bins}\n"
+                            << "#   - {Emin: " << id.Emin << ", unit: MeV, description: minimum energy}\n"
+                            << "#   - {Emax: " << id.Emax << ", unit: MeV, description: maximum energy}\n"
+                            << "#   - {deltam_21: " << id.deltam_21 << ", unit: eV2, description: 2->1 mass splitting}\n"
+                            << "#   - {deltam_32: " << id.deltam_32 << ", unit: eV2, description: 3->2 mass splitting}\n"
+                            << "#   - {theta_12: " << id.theta12 << ", unit: deg, description: 1->2 mixing angle}\n"
+                            << "#   - {theta_13: " << id.theta13 << ", unit: deg, description: 1->3 mixing angle}\n"
+                            << "#   - {theta_23: " << id.theta23 << ", unit: deg, description: 2->3 mixing angle}\n"
+                            << "#   - {delta_CP: " << id.deltaCP << ", unit: deg, description: CP violating phase}\n"
+                            << "#   - {accuracy: " << id.accuracy << ", description: accuracy of Runge-Kutta solver}\n"
+                            << "#   - {stepcounterlimit: " << id.stepcounterlimit << ", description: output data every N steps}\n";
+
+                 // First line with column names
                  fHvslambda << "lambda r rho Ye HMSW_ee";
                }
                else {
