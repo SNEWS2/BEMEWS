@@ -26,8 +26,8 @@ sudo python3 setup.py install
 
 TROUBLESHOOTING:
 
-1) When using EMEWS you may have to set the PYTHONPATH environment variable to your PWD
-   and/or wherever the EMEWS module was installed in steps 3) or step 4)
+1) When using BEMEWS you may have to set the PYTHONPATH environment variable to your PWD
+   and/or wherever the BEMEWS module was installed in steps 3) or step 4)
 
 2) If your script still cannot find the module you may need to put the *.so library in the same directory
    as the file. The *.so library is in one of the subfolders in the build directory. 
