@@ -58,8 +58,8 @@ jobs:
         if: ${{ startsWith(matrix.os, 'windows') }}
         run: |
           python -m build
-#          ls -al dist/
-#          pip install dist/*.whl
+          dir dist
+          pip install dist/*.whl
 
       - name: Run example script
         run: |
