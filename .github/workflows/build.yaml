@@ -54,6 +54,13 @@ jobs:
           ls -al dist/
           pip install dist/*.whl
 
+      - name: Install BEMEWS (Windows)
+        if: ${{ startsWith(matrix.os, 'windows') }}
+        run: |
+          python -m build
+#          ls -al dist/
+#          pip install dist/*.whl
+
       - name: Run example script
         run: |
           python BEMEWS_example.py
