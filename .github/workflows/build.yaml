@@ -42,10 +42,10 @@ jobs:
         if: ${{ startsWith(matrix.os, 'ubuntu') }}
         run: |
           exit 1 # TODO: Add Ubuntu dependencies here
-      - name: Install dependencies (Windows)
-        if: ${{ startsWith(matrix.os, 'windows') }}
-        run: |
-          exit 1 # TODO: Add Windows dependencies here
+#      - name: Install dependencies (Windows)
+#        if: ${{ startsWith(matrix.os, 'windows') }}
+#        run: |
+#          exit 1 # TODO: Add Windows dependencies here
 
       - name: Install BEMEWS
         run: |
