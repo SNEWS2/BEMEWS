@@ -18,7 +18,7 @@
 #define M_SQRTPI 1.772453850905516027298167      // sqrt of pi
 #define M_1_SQRTPI 0.564189583547756286948       // reciprocal of sqrt pi 
 #ifndef M_PI
-#define M_PI M_SQRTPI*M_SQRTPI                   // needed for Windows compiler
+#define M_PI M_SQRTPI*M_SQRTPI                   // needed by some compilers
 #endif // M_PI
 #define M_2PI 6.283185307179586476925286766559   // 2 pi
 #define M_4PI 2.*M_2PI                           // 4 pi
@@ -30,6 +30,9 @@
 #define M_2PI_3 M_2PI / 3.      // 2pi / 3
 #define M_4PI_3 2.* M_2PI_3     // 4pi / 3
 
+#ifndef M_SQRT2
+#define M_SQRT2 1.4142135623730951455  // sqrt of 2 (needed by some compilers)
+#endif // M_SQRT2
 #define M_SQRT3 1.7320508075688772935  // sqrt of 3
 #define M_SQRT5 2.2360679774997896964  // sqrt of 5
 #define M_SQRT6 M_SQRT2*M_SQRT3        // sqrt of 6
