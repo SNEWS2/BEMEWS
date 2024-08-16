@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest] # [macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-latest, windows-latest] # [macos-latest, ubuntu-latest, windows-latest]
         python-version: ['3.10', '3.11', '3.12']
     runs-on: ${{ matrix.os }}
 
@@ -42,16 +42,26 @@ jobs:
         if: ${{ startsWith(matrix.os, 'ubuntu') }}
         run: |
           exit 1 # TODO: Add Ubuntu dependencies here
-      - name: Install dependencies (Windows)
-        if: ${{ startsWith(matrix.os, 'windows') }}
-        run: |
-          exit 1 # TODO: Add Windows dependencies here
+#      - name: Install dependencies (Windows)
+#        if: ${{ startsWith(matrix.os, 'windows') }}
+#        run: |
+#          exit 1 # TODO: Add Windows dependencies here
 
-      - name: Install BEMEWS
+      - name: Install BEMEWS (macOS)
+        if: ${{ startsWith(matrix.os, 'macos') }}
         run: |
           python -m build
           ls -al dist/
           pip install dist/*.whl
+
+      - name: Install BEMEWS (Windows)
+        if: ${{ startsWith(matrix.os, 'windows') }}
+        run: |
+          python -m build
+          dir dist
+#- Wheel not being built, turn this off.
+#          pip install "dist\*.whl"
+
       - name: Run example script
         run: |
           python BEMEWS_example.py

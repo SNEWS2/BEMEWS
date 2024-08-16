@@ -10,7 +10,7 @@ void RungeKuttaCashKarpParameters(int &NRK,int &NOrder,const double* &A,const do
      { NRK=6; NOrder=5;
 
        static const double a[]={ 0., 1./5., 3./10., 3./5., 1., 7./8. };
-       static const double b0[]={};
+       static const double b0[1]={};
        static const double b1[]={ 1./5. };
        static const double b2[]={ 3./40.,9./40. };
        static const double b3[]={ 3./10.,-9./10.,6./5. };
