@@ -47,11 +47,13 @@ jobs:
 #        run: |
 #          exit 1 # TODO: Add Windows dependencies here
 
-      - name: Install BEMEWS
+      - name: Install BEMEWS (macOS)
+        if: ${{ startsWith(matrix.os, 'macos') }}
         run: |
           python -m build
           ls -al dist/
           pip install dist/*.whl
+
       - name: Run example script
         run: |
           python BEMEWS_example.py
