@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import platform
 from setuptools import setup
 from setuptools.extension import Extension
 import sysconfig
@@ -10,10 +11,26 @@ import pybind11
 # Here, we only run code to set up environment variables for compilation of
 # the binary extension and register it with the `ext_modules` argument.
 
-LIBOMP_INCLUDE = os.environ['LIBOMP_INCLUDE']
 PYBIND11_INCLUDE = os.path.join(pybind11.__path__[0], "include")
+
+# Set up libraries and includes
+include_dirs = [
+    PYBIND11_INCLUDE,
+    './src/BEMEWS/_ext',
+    './src/BEMEWS/_ext/mstl',
+    './src/BEMEWS/_ext/mstl/math2',
+    './src/BEMEWS/_ext/mstl/math2/algebra',
+    './src/BEMEWS/_ext/mstl/math2/analysis',
+    './src/BEMEWS/_ext/mstl/math2/spline',
+    './src/BEMEWS/_ext/mstl/physics'
+]
+
 if os.name == 'posix':  # macOS or Linux
     LIBDIR = sysconfig.get_config_var('LIBDIR')
+    if platform.system() == 'Darwin':
+        # Must have LIBOMP_INCLUDE env variable in macOS
+        LIBOMP_INCLUDE = os.environ['LIBOMP_INCLUDE']
+        include_dirs = [LIBOMP_INCLUDE] + include_dirs
 elif os.name == 'nt':  # Windows
     LIBDIR = sysconfig.get_config_var('LIBDEST')
 
@@ -22,17 +39,7 @@ BEMEWS = Extension('BEMEWS._ext',
         ('MAJOR_VERSION', '1'),
         ('MINOR_VERSION', '0')
     ],
-    include_dirs = [
-        LIBOMP_INCLUDE,
-        PYBIND11_INCLUDE,
-        './src/BEMEWS/_ext',
-        './src/BEMEWS/_ext/mstl',
-        './src/BEMEWS/_ext/mstl/math2',
-        './src/BEMEWS/_ext/mstl/math2/algebra',
-        './src/BEMEWS/_ext/mstl/math2/analysis',
-        './src/BEMEWS/_ext/mstl/math2/spline',
-        './src/BEMEWS/_ext/mstl/physics'
-    ],
+    include_dirs = include_dirs,
     #
     # libraries = ['stdc++', 'm', 'gomp', 'python3'],
     #
