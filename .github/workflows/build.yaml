@@ -55,6 +55,9 @@ jobs:
       - name: Run example script
         run: |
           python BEMEWS_example.py
+      - name: Test with pytest
+        run: |
+          pytest -v
 
       - name: Upload distributions
         uses: actions/upload-artifact@v4
