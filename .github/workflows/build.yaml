@@ -52,9 +52,13 @@ jobs:
           python -m build
           ls -al dist/
           pip install dist/*.whl
-      - name: Run example script
+#      - name: Run example script
+#        run: |
+#          python BEMEWS_example.py
+      - name: Test with pytest
         run: |
-          python BEMEWS_example.py
+          python -m pip install pytest
+          pytest -v
 
       - name: Upload distributions
         uses: actions/upload-artifact@v4
