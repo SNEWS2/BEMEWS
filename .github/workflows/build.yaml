@@ -57,6 +57,7 @@ jobs:
 #          python BEMEWS_example.py
       - name: Test with pytest
         run: |
+          python -m pip install pytest
           pytest -v
 
       - name: Upload distributions
