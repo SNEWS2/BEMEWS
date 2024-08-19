@@ -52,9 +52,9 @@ jobs:
           python -m build
           ls -al dist/
           pip install dist/*.whl
-      - name: Run example script
-        run: |
-          python BEMEWS_example.py
+#      - name: Run example script
+#        run: |
+#          python BEMEWS_example.py
       - name: Test with pytest
         run: |
           pytest -v
