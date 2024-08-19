@@ -5,6 +5,7 @@ import numpy as np
 import sys
 
 import BEMEWS
+import BEMEWS.data
 
 class TestInit(unittest.TestCase):
     def test_import(self):
@@ -47,9 +48,6 @@ class TestInit(unittest.TestCase):
 
         _id.NE = 296
         self.assertTrue(_id.NE == 296)
-
-        _id.Emin = 1
-        self.assertTrue(_id.Emin == 1)
 
         _id.Emin = 1
         self.assertTrue(_id.Emin == 1)
