@@ -59,12 +59,11 @@ jobs:
         run: |
           python -m build
           dir dist
-#- Wheel not being built, turn this off.
-#          pip install "dist\*.whl"
 
       - name: Run example script
         run: |
-          python BEMEWS_example.py
+          python -m pip install pytest
+          pytest -v
 
       - name: Upload distributions
         uses: actions/upload-artifact@v4

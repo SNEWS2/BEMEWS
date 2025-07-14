@@ -24,6 +24,8 @@ dependencies = [
 [project.urls]
 "Homepage" = "https://github.com/SNEWS2/BEMEWS"
 
+[project.optional-dependencies]
+test = [ "pytest" ]
 
 [tool.setuptools]
 # The sdist should include all files in the repo (notably *.cpp and *.h),
