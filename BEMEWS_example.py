@@ -42,7 +42,7 @@ if __name__ == "__main__":
     p.add_argument('--emin', type=float,
                    help='Minimum energy in MeV')
     p.add_argument('--emax', type=float,
-                   help='Maximum energy ax MeV')
+                   help='Maximum energy in MeV')
     p.add_argument('--accuracy', type=float,
                    help='Accuracy of Runge-Kutta solver')
     p.add_argument('--output', action='store_true',
