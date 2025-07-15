@@ -70,9 +70,7 @@ if __name__ == "__main__":
     detector = EarthLocation.of_site(settings['detector'])
 
     # time when the supernova occured 
-    # the first time option means the neutrinos traveled through the Earth, the second means they did not
     time = Time(settings['time'])
-    #time = Time('2021-5-26 14:14:00') - 12*u.hour    
 
     # altaz of supernovae at detector
     SNaltaz = source.transform_to(AltAz(obstime=time, location=detector)) 
