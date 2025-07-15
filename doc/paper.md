@@ -54,20 +54,17 @@ bibliography: paper.bib
 
 # Summary
 
-BEMEWS is a python module for calculating the Earth-matter effect on neutrino flavor transformations. It is a standalone module that SNEWPY uses to compute the Earth-Matter Effect for supernova neutrinos. The BEMEWS_example.py script shows how to use the module in standalone mode. The EarthMatter flavor transformation class in SNEWPY is essentially the same script but with the output options turned off.
-
+BEMEWS is a python module for calculating the Earth-Matter Effect (EME) upon neutrinos. It is a standalone module but it can also be used with SNEWPY 2.0 to add EMEs to supernova neutrino signals. 
 
 # Statement of need
 
-If the neutrinos from a supernova pass through the Earth before reaching a detector then an imprint can be left on the signal. This imprint depends upon the location of the supernova on the sky relative to the detector. BEMEWS (Better Earth Matter Effects With SNEWPY) is a python module that calculates the Earth Matter Effect for a given sky location of the supernova, Earth location for the detector, neutrino energy and mixing paramaters. It can be run as a standalone code or it can imported into the SNEWPY software and used as a `modifier' in a TransformationChain neutrino flavor transformation prescription. 
+If the neutrinos from a source pass through the Earth before reaching a detector then an imprint from the matter can be left on the signal. This imprint depends upon the profle of the matter along the trajectory between source and detector. BEMEWS (Better Earth Matter Effects With SNEWPY) is a python module that calculates the Earth-Matter Effect for a given source and detector location, neutrino energy and mixing paramaters. The EME is determined by solving the Schrodinger equation for the neutrino evolution operator using a Hamiltonian composed of the 'vacuum term' and the MSW 'matter term'. Further details of the calculation can be found in the appendix of the in the SNEWPY 2.0 documentation. The output is in the form of tables of of the probability that a neutrino of a given initial state nu_j is detected as state nu_i. Output files of the probabilities as a function of distance traveled along the trajectroy are generated for each neutrino energy, and of the probabilities as a function of neutrino energy at the detector location. 
 
-The package, written in Python, is built upon NUMPY [@harris2020array] and makes use of  ASTROPY [@Astropy:2013muo;
-@Price-Whelan:2018hus] for angle conversions, sky location of well-known progenitors, and Earth locations of neutrinos detecors.
+# How to use BEMEWS
 
-SNEWPY will function without access to the BEMEWS module but of course the EarthMatter modifier will not be available. Note that BEMEWS uses the PREM as the density profile for the Earth: this can be changed by altering the contents of the datafile. 
+The BEMEWS.py example script in the doc folder shows how to use the module in standalone mode. BEMEWS can also be imported into the SNEWPY 2.0  software and used as a `modifier' in a TransformationChain neutrino flavor transformation prescription. How to include BEMEWS with SNEWPY will be documented in the SNEWPY documentation. Note that BEMEWS uses the PREM as the density profile for the Earth: this can be changed by altering the contents of the file in the src/data folder. 
 
-To use the module the user must create an ASTROPY AltAz object with the altitude-azimuth (AltAz) of the supernova at the detector. To facilitate computing the AltAz objects, ASTROPY now includes many neutrino detectors in its list of EarthLocation classes that can be referenced by name. At the present time these detectors are: IceCube, NOvA, HALO, SNO+, ORCA, ARCA, HyperK and SuperK. 
-Once made, the AstroPY AltAz object can be input into the EarthMatter prescription which itself is then input into the TransformationChain prescription. An example script is provided in which an ASTROPY AltAz object for the SuperK detector if Betelgeuse exploded on May 26th 2021 at 23:14:00 local time is created. 
+As shown in the BEMEWS.py example script, to use BEMEWS the user must provide the altitude and azimuth of the source relative to the detector. For supernova neutrinos from a particular sky location, these can be determined from an ASTROPY AltAz object. To facilitate computing the AltAz objects for specific sky and detector locations, SNEWS has worked with ASTROPY so that ASTROPY now includes many neutrino detectors in its list of EarthLocation classes that can be referenced by name. At the present time these detectors are: IceCube, NOvA, HALO, SNO+, ORCA, ARCA, HyperK and SuperK. In the BEMEWS.py example script, an ASTROPY AltAz object is made for the combination of the explosion of Betelgeuse on May 26th 2021 at 14:14:00 UT, and the SuperK detector.  
 
 # Acknowledgements
 
