@@ -61,11 +61,10 @@ BEMEWS is a python module for calculating the Earth-matter effect on neutrino fl
 
 If the neutrinos from a supernova pass through the Earth before reaching a detector then an imprint can be left on the signal. This imprint depends upon the location of the supernova on the sky relative to the detector. BEMEWS (Better Earth Matter Effects With SNEWPY) is a python module that calculates the Earth Matter Effect for a given sky location of the supernova, Earth location for the detector, neutrino energy and mixing paramaters. It can be run as a standalone code or it can imported into the SNEWPY software and used as a `modifier' in a TransformationChain neutrino flavor transformation prescription. 
 
-The package, written in Python, is built upon NUMPY [@harris2020array] and SCIPY [@Virtanen:2019joe], and makes use of  ASTROPY [@Astropy:2013muo;
+The package, written in Python, is built upon NUMPY [@harris2020array] and makes use of  ASTROPY [@Astropy:2013muo;
 @Price-Whelan:2018hus] for angle conversions, sky location of well-known progenitors, and Earth locations of neutrinos detecors.
 
-SNEWPY will function without access to the BEMEWS module but of course the EarthMatter modifier will not be available. Note that BEMEWS 
-uses the PREM as the density profile for the Earth: this can be changed by altering the contents of the datafile. 
+SNEWPY will function without access to the BEMEWS module but of course the EarthMatter modifier will not be available. Note that BEMEWS uses the PREM as the density profile for the Earth: this can be changed by altering the contents of the datafile. 
 
 To use the module the user must create an ASTROPY AltAz object with the altitude-azimuth (AltAz) of the supernova at the detector. To facilitate computing the AltAz objects, ASTROPY now includes many neutrino detectors in its list of EarthLocation classes that can be referenced by name. At the present time these detectors are: IceCube, NOvA, HALO, SNO+, ORCA, ARCA, HyperK and SuperK. 
 Once made, the AstroPY AltAz object can be input into the EarthMatter prescription which itself is then input into the TransformationChain prescription. An example script is provided in which an ASTROPY AltAz object for the SuperK detector if Betelgeuse exploded on May 26th 2021 at 23:14:00 local time is created. 
