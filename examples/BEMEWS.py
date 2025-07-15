@@ -109,8 +109,8 @@ if __name__ == "__main__":
     if ID.outputflag:
         os.makedirs('out', exist_ok=True)
 
-    # do the calculation. The return is a four dimensional array of transition probabilities nu_alpha -> nu_i: 
-    # index order is matter/antimatter, energy, i, alpha
+    # do the calculation. The return is a four dimensional array of transition probabilities nu_i -> nu_alpha: 
+    # index order is matter/antimatter, energy, alpha, i
     Pfm = BEMEWS.Run(ID)
 
     print("finished")
