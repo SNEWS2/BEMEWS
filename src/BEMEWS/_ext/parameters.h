@@ -15,8 +15,8 @@ inline flavour operator++(flavour &n,int){ flavour tmp=n; n=(flavour)( (int)n+1 
 // number of parametrs needed to describe neutrino S matrix
 constexpr int NY=12; 
 
-// number of energy bins 
-extern int NE;
+// number of energy bins, lower limit of energy index to calculate
+extern int NE, imin;
 
 // min and max energy, the first pair are in erg, the second in MeV
 extern double Emin,Emax, EminMeV,EmaxMeV;
