@@ -34,7 +34,7 @@ vector<vector<MATRIX<complex<double>,NF,NF> > > UpdateSm(double lambdaminus,doub
             VfMSW[antinu] = -VfMSW[nu];
 
 	    #pragma omp parallel for schedule(static) private(Hf,Hfbar,kk,kkbar,dkk,dkkbar,UU,UUbar)
-	    for(i=0;i<=NE-1;i++)
+	    for(i=imin;i<=NE-1;i++)
                { Hf=HfV[nu][i]+VfMSW[nu];
                  kk=k(Hf);
                  dkk=deltak(kk);
@@ -61,7 +61,7 @@ vector<vector<MATRIX<complex<double>,NF,NF> > > UpdateSm(double lambdaminus,doub
             VfMSW[antinu] = -VfMSW[nu];
 
 	    #pragma omp parallel for schedule(static) private(Hf,Hfbar,kk,kkbar,dkk,dkkbar,UU,UUbar)
-	    for(i=0;i<=NE-1;i++)
+	    for(i=imin;i<=NE-1;i++)
                { Hf=HfV[nu][i]+VfMSW[nu];
                  kk=k(Hf);
              	 dkk=deltak(kk);
