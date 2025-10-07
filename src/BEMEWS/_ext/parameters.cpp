@@ -8,7 +8,7 @@ using std::vector;
 // *******************************************************
 
 // number of energy bins 
-int NE;
+int NE, imin;
 
 // min and max energy, the first pair are in erg, the second in MeV
 double Emin,Emax, EminMeV,EmaxMeV;
