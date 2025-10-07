@@ -75,6 +75,9 @@ void Neutrino_loader(InputDataBEMEWS ID,std::string &outputfilenamestem)
        EminMeV = ID.Emin;
        EmaxMeV = ID.Emax; // in MeV
 
+       if(EminMeV == 0.){ imin = 1;} 
+       else{ imin = 0;}      
+
        m1 = 0.;
        dm21 = ID.deltam_21;
        dm32 = ID.deltam_32; // in eV^2
