@@ -176,7 +176,7 @@ vector<vector<vector<vector<double> > > > Run(InputDataBEMEWS ID)
            HfV=vector<vector<MATRIX<complex<double>,NF,NF> > >(NM,vector<MATRIX<complex<double>,NF,NF> >(NE));
 
 	   // vectors of energies at infinity and vacuum eigenvalues at infinity
-           for(i=0;i<=NE-1;i++)
+           for(i=imin;i<=NE-1;i++)
               { if(NE>1){ E[i] = ((NE-1.-i)*Emin + i*Emax) / (NE-1.);}
                 else{ E[i] = Emin;}
                 kV[i][0] = m1*m1 * cgs::constants::c4 /2./E[i];
@@ -202,7 +202,7 @@ vector<vector<vector<vector<double> > > > Run(InputDataBEMEWS ID)
 
            // vaccum mixing matrices and Hamiltonians at infinity
            Evaluate_UV(); 
-	   Evaluate_HfV(); 
+	       Evaluate_HfV(); 
 
            // *****************************************************
            // quantities evaluated at inital point
@@ -223,7 +223,7 @@ vector<vector<vector<vector<double> > > > Run(InputDataBEMEWS ID)
            U0 = vector<vector<MATRIX<complex<double>,NF,NF> > >(NM,vector<MATRIX<complex<double>,NF,NF> >(NE)); 
 
            // mixing angles to MSW basis at initial point
-	   for(i=0;i<=NE-1;i++)
+	       for(i=imin;i<=NE-1;i++)
               { Hf0=HfV[nu][i]+VfMSW0;
                 k0=k(Hf0);
                 deltak0=deltak(k0);
@@ -284,8 +284,8 @@ vector<vector<vector<vector<double> > > > Run(InputDataBEMEWS ID)
            lasttime = false;
 
            // take into account the density jump from vacuum into Earth           
-	   #pragma omp parallel for schedule(static)
-           for(i=0;i<=NE-1;i++){
+	       #pragma omp parallel for schedule(static)
+           for(i=imin;i<=NE-1;i++){
                for(state m=nu;m<=antinu;m++){ 
                    Scumulative[m][i] = Adjoint(U0[m][i])*UV[m];
                   }
@@ -303,23 +303,23 @@ vector<vector<vector<vector<double> > > > Run(InputDataBEMEWS ID)
                 // initialize at beginning of every domain
                 lambda=lambdamin; dlambda=1e-3*cgs::units::cm; deltalambdamin=4.*lambda*numeric_limits<double>::epsilon();
 
-		#pragma omp parallel for schedule(static)
-                for(i=0;i<=NE-1;i++){
+		        #pragma omp parallel for schedule(static)
+                for(i=imin;i<=NE-1;i++){
                     for(state m=nu;m<=antinu;m++){ 
                         Y[m][i][0]=M_PI/2.;
-	                Y[m][i][1]=M_PI/2.;
-		        Y[m][i][2]=M_PI/2.;
-                	Y[m][i][3]=M_PI/2.;
+	                    Y[m][i][1]=M_PI/2.;
+		                Y[m][i][2]=M_PI/2.;
+                	    Y[m][i][3]=M_PI/2.;
                         Y[m][i][4]=0.;
                         Y[m][i][5]=M_PI/2.;
-                	Y[m][i][6]=M_PI/2.;
+                	    Y[m][i][6]=M_PI/2.;
                         Y[m][i][7]=0;
 
                         Y[m][i][8]=1.;
 
                         Y[m][i][9]=0.;
-  	            	Y[m][i][10]=0.;
-        	        Y[m][i][11]=0.;
+  	            	    Y[m][i][10]=0.;
+        	            Y[m][i][11]=0.;
 		       }
 		   }
 
@@ -358,7 +358,7 @@ vector<vector<vector<vector<double> > > > Run(InputDataBEMEWS ID)
                         // second step
                         lambda=lambda0+AA[1]*dlambda;
                         #pragma omp parallel for schedule(static)
-                        for(i=0;i<=NE-1;i++){
+                        for(i=imin;i<=NE-1;i++){
                             for(state m=nu;m<=antinu;m++){
                                 for(int j=0;j<=NY-1;j++){ Y[m][i][j] += BB[1][0] * Ks[0][m][i][j];}
 		               } 
@@ -370,12 +370,12 @@ vector<vector<vector<vector<double> > > > Run(InputDataBEMEWS ID)
                             lambda=lambda0+AA[k]*dlambda;
                             Y=Y0; 
                             #pragma omp parallel for schedule(static)
-                            for(i=0;i<=NE-1;i++){
+                            for(i=imin;i<=NE-1;i++){
                                 for(state m = nu; m <= antinu; m++){
  		                    for(int j=0;j<=NY-1;j++){
-				        for(int l=0;l<=k-1;l++){ Y[m][i][j] += BB[k][l] * Ks[l][m][i][j];}
-				       }
-				   } 
+				                for(int l=0;l<=k-1;l++){ Y[m][i][j] += BB[k][l] * Ks[l][m][i][j];}
+				                   }
+				               } 
 			       } 
                             K(lambda,dlambda,Y,Ks[k]);
                            }
@@ -383,15 +383,15 @@ vector<vector<vector<vector<double> > > > Run(InputDataBEMEWS ID)
                         // increment all quantities and update C and A arrays
                         lambda=lambda0+dlambda;             
                         #pragma omp parallel for schedule(static)
-                        for(i=0;i<=NE-1;i++){
+                        for(i=imin;i<=NE-1;i++){
                             for(state m=nu;m<=antinu;m++){                            
                                 for(int j=0;j<=NY-1;j++){
                                     Y[m][i][j]=Y0[m][i][j]; 
-     			            Yerror[m][i][j]=0.;
-                        	    for(int k=0;k<=NRK-1;k++){
+     			                    Yerror[m][i][j]=0.;
+                        	        for(int k=0;k<=NRK-1;k++){
                                         Y[m][i][j]+=CC[k]*Ks[k][m][i][j]; 
-				        Yerror[m][i][j]+=(CC[k]-DD[k])*Ks[k][m][i][j];
-				       }
+				                        Yerror[m][i][j]+=(CC[k]-DD[k])*Ks[k][m][i][j];
+				                       }
                                    }
                                } 
                            }
@@ -399,7 +399,7 @@ vector<vector<vector<vector<double> > > > Run(InputDataBEMEWS ID)
                         // find largest error
                         maxerror=0.; 
                         for(state m=nu;m<=antinu;m++){
-                            for(i=0;i<=NE-1;i++){
+                            for(i=imin;i<=NE-1;i++){
                                 for(int j=0;j<=NY-1;j++){ maxerror = max( maxerror, fabs(Yerror[m][i][j]) );}
 			       }
                            }
@@ -418,7 +418,7 @@ vector<vector<vector<vector<double> > > > Run(InputDataBEMEWS ID)
 
                     // check S matrices are diagonal dominated, if not then accumulate S and reset variables
                     #pragma omp parallel for schedule(static) private(SS,resetflag)
-                    for(i=0;i<=NE-1;i++){
+                    for(i=imin;i<=NE-1;i++){
                         for(state m=nu;m<=antinu;m++){                         
                             SS=W(Y[m][i])*B(Y[m][i]); 
 
@@ -435,7 +435,7 @@ vector<vector<vector<vector<double> > > > Run(InputDataBEMEWS ID)
 
                                 Y[m][i][0]=Y[m][i][1]=Y[m][i][2]=Y[m][i][3]=M_PI/2.; Y[m][i][4]=0.;
                                 Y[m][i][5]=Y[m][i][6]=M_PI/2.;                       Y[m][i][7]=0.;
-                	        Y[m][i][8]=1.;	
+                	            Y[m][i][8]=1.;	
                                 Y[m][i][9]=Y[m][i][10]=Y[m][i][11]=0.;
                                }
                             else{ // take modulo 2 pi of phase angles
