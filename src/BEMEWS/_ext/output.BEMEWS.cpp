@@ -275,9 +275,9 @@ void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double 
         int i;
 
         for(i=0;i<=imin-1;i++)
-	       { Sm[nu][i] = Sm[antinu][i] = UnitMatrix<complex<double> >(NF,NF);
-             Sfm[nu][i] = Sfm[antinu][i] = UnitMatrix<complex<double> >(NF,NF);	   
-             Sf[nu][i] = Sf[antinu][i] = UnitMatrix<complex<double> >(NF,NF);             
+	       { Sm[nu][i] = Sm[antinu][i] = UnitMatrix<complex<double> >(NF);
+             Sfm[nu][i] = Sfm[antinu][i] = UnitMatrix<complex<double> >(NF);	   
+             Sf[nu][i] = Sf[antinu][i] = UnitMatrix<complex<double> >(NF);             
             }   
 	   
         #pragma omp parallel for schedule(static)
