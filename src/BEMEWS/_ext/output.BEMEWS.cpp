@@ -75,7 +75,7 @@ void Output_Pvslambda(bool firsttime,bool lasttime,ofstream &fPvslambda,double l
         int i;
 
         for(i=0;i<=imin-1;i++)
-	  { Sm[nu][i] = Sm[antinu][i] = UnitMatrix<complex<double> >(NF,NF);
+	       { Sm[nu][i] = Sm[antinu][i] = UnitMatrix<complex<double> >(NF,NF);
              Sfm[nu][i] = Sfm[antinu][i] = UnitMatrix<complex<double> >(NF,NF);	   
              Sf[nu][i] = Sf[antinu][i] = UnitMatrix<complex<double> >(NF,NF);             
             }       
@@ -273,11 +273,18 @@ void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double 
         vector<vector<array<double,NF> > > dkk(NM,vector<array<double,NF> >(NE));
 
         int i;
+
+        for(i=0;i<=imin-1;i++)
+	       { Sm[nu][i] = Sm[antinu][i] = UnitMatrix<complex<double> >(NF,NF);
+             Sfm[nu][i] = Sfm[antinu][i] = UnitMatrix<complex<double> >(NF,NF);	   
+             Sf[nu][i] = Sf[antinu][i] = UnitMatrix<complex<double> >(NF,NF);             
+            }   
+	   
         #pragma omp parallel for schedule(static)
-        for(i=0;i<=NE-1;i++)
+        for(i=imin;i<=NE-1;i++)
            { Hf[nu][i]=HfV[nu][i] + VfMSW[nu];
              kk[nu][i]=k(Hf[nu][i]);
-               dkk[nu][i]=deltak(kk[nu][i]);
+             dkk[nu][i]=deltak(kk[nu][i]);
              UU[nu][i]=MixingMatrix(Hf[nu][i],kk[nu][i],dkk[nu][i]);
 
              Sa[nu][i] = W(Y[nu][i]) * B(Y[nu][i]);
@@ -298,7 +305,7 @@ void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double 
              // *********
              
              Hf[antinu][i]=HfV[antinu][i] + VfMSW[antinu];
-               kk[antinu][i]=kbar(Hf[antinu][i]);
+             kk[antinu][i]=kbar(Hf[antinu][i]);
              dkk[antinu][i]=deltakbar(kk[antinu][i]);
              UU[antinu][i]=MixingMatrix(Hf[antinu][i],kk[antinu][i],dkk[antinu][i]);
        
@@ -317,8 +324,6 @@ void Output_PvsE(bool lasttime,ofstream &fPvsE,string outputfilenamestem,double 
                        Sf[antinu][i] = UV[antinu] * Smf[antinu][i];
                       }
             }
-
-        // *******
         
         // *******
 
