@@ -88,7 +88,7 @@ void K(double lambda,double dlambda,vector<vector<array<double,NY> > > &Y,vector
 
    	    // set up neutrino S matrices
             #pragma omp parallel for schedule(static) private(Hf,Hfbar,dHfdlambda,dHfbardlambda,BB,WW,UU,UUbar,kk,kkbar,dkk,dkkbar) firstprivate(Ha,HaB,dvdlambda,phase,JI)
-            for(i=0;i<=NE-1;i++)
+            for(i=imin;i<=NE-1;i++)
                { Hf=HfV[nu][i]+VfMSW;
                  dHfdlambda=dVfMSWdlambda;
 
@@ -100,7 +100,7 @@ void K(double lambda,double dlambda,vector<vector<array<double,NY> > > &Y,vector
                  BB=B(Y[nu][i]);
                  WW=W(Y[nu][i]);
 
-	         phase[0] = M_2PI*(Y[nu][i][9]-Y[nu][i][10]);
+	     phase[0] = M_2PI*(Y[nu][i][9]-Y[nu][i][10]);
  		 phase[1] = M_2PI*(Y[nu][i][9]-Y[nu][i][11]);
 		 phase[2] = M_2PI*(Y[nu][i][10]-Y[nu][i][11]);
 
