@@ -35,8 +35,12 @@ void Pfm(double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRI
         vector<vector<array<double,NF> > > dkk(NM,vector<array<double,NF> >(NE));
 
         int i;
+
+	  for(i=0;i<=imin-1;i++)
+	     { Sfm[nu][i] = Sfm[antinu][i] = UnitMatrix<complex<double> >(NF,NF);}
+       
         #pragma omp parallel for schedule(static)
-        for(i=0;i<=NE-1;i++)
+        for(i=imin;i<=NE-1;i++)
            { Hf[nu][i]=HfV[nu][i] + VfMSW[nu];
              kk[nu][i]=k(Hf[nu][i]);
              dkk[nu][i]=deltak(kk[nu][i]);
