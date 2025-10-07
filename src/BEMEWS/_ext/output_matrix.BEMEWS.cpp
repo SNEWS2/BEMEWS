@@ -37,7 +37,7 @@ void Pfm(double lambda,vector<vector<array<double,NY> > > &Y,vector<vector<MATRI
         int i;
 
 	  for(i=0;i<=imin-1;i++)
-	     { Sfm[nu][i] = Sfm[antinu][i] = UnitMatrix<complex<double> >(NF,NF);}
+	     { Sfm[nu][i] = Sfm[antinu][i] = UnitMatrix<complex<double> >(NF);}
        
         #pragma omp parallel for schedule(static)
         for(i=imin;i<=NE-1;i++)
